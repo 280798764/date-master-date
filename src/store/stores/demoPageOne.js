@@ -2,10 +2,80 @@
 import ajax from '@/utils/ajax'
 
 const actions = {
-  /* 接口功能备注 */
-  'a:demoPageOne/getXXXXXXXXX' ({commit}, params) {
+  /*  */
+  'a:device/getMachineType' ({commit}, params) {
     return ajax.api({
-      cmd: 'xxxxxxx/demoPageOne/getXXXXXXXXX',
+      cmd: 'ime-sys/machineManage/getMachineType',
+      parameters: params
+    })
+  },
+  /* 获取品牌 */
+  'a:device/getBrandList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/brandManage/getBrandList',
+      parameters: params
+    })
+  },
+  /* 获取大类 */
+  'a:device/getMainTypeListNoPage' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/mainTypeManage/getMainTypeListNoPage',
+      parameters: params
+    })
+  },
+  /* 获取品牌 */
+  'a:device/getMachineTypeByMainCode' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getMachineTypeByMainCode',
+      parameters: params
+    })
+  },
+  /* 获取途径 */
+  'a:device/getMachineObtainType' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getMachineObtainType',
+      parameters: params
+    })
+  },
+  /* // 获取设备制造商/使用权/所有权 */
+  'a:device/getFacNameAndId' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getFacNameAndId',
+      parameters: params
+    })
+  },
+  /* 获取列表 */
+  'a:device/getMachineList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getMachineList',
+      parameters: params
+    })
+  },
+  /* 读取详情 */
+  'a:device/getMachineById' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getMachineById',
+      parameters: params
+    })
+  },
+  /* 修改 */
+  'a:device/updateMachineById' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/updateMachineById',
+      parameters: params
+    })
+  },
+  /* 新建 */
+  'a:device/saveMachine' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/saveMachine',
+      parameters: params
+    })
+  },
+  /* 删除 */
+  'a:device/deleteMachineById' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/deleteMachineById',
       parameters: params
     })
   }

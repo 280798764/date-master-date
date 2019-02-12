@@ -1,6 +1,6 @@
 /* 访问Wms项目 */
 import axios from 'axios'
-import {DOMAIN, TOKEN_NAME} from '@/utils/config'
+import {DOMAIN} from '@/utils/config'
 
 axios.defaults.baseURL = DOMAIN.apiPath
 
@@ -8,7 +8,8 @@ export default {
   // 登陆后私有接口使用
   api (data) {
     return new Promise((resolve, reject) => {
-      data.parameters.iToken = sessionStorage.getItem(TOKEN_NAME)
+      // data.parameters.iToken = sessionStorage.getItem(TOKEN_NAME)
+      data.userToken = sessionStorage.getItem('userToken')
       axios.post('/', data).then(
         res => {
           let resData = res.data

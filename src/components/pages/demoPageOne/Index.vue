@@ -1,6 +1,6 @@
 /* 这里是页面备注 */
 <template>
-  <section>
+  <section style="background-color: #eee;">
     <div class="wrap">
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
@@ -12,63 +12,64 @@
           <label>品牌</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{item.name}}</Option>
             </Select>
           </div>
           <label>大类</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in mainTypeListNoPage" :value="item.id" :key="item.id">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>设备类型</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in machineTypeByMainCode" :value="item.symgMachineTypeId" :key="item.symgMachineTypeId">{{item.symgMtName}}</Option>
             </Select>
           </div>
-          <label class="app-name-dev special-first">设备序列号</label><input type="text">
         </div>
         <div class="filter-line">
+          <label class="app-name-dev special-first">设备序列号</label><input type="text">
           <label>设备制造商</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
           <label>所有权</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
+        </div>
+        <div class="filter-line">
           <label>使用权</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
           <label class="app-name-dev special-first">MAC</label><input type="text">
-
+          <label class="app-name-dev special-first">UKEY</label><input type="text">
         </div>
         <div class="filter-line">
-          <label class="app-name-dev special-first">UKEY</label><input type="text">
           <label>获取途径</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in machineObtainType" :value="item.code" :key="item.code">{{item.name}}</Option>
             </Select>
           </div>
           <label>iport类型</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in iportNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
           <label>vpn更新</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
         </div>
@@ -76,39 +77,49 @@
           <label>是否上线</label>
           <div class="select-wrapper">
             <Select clearable>
-              <Option v-for="item in developType" :value="item.id" :key="item.id">{{item.name}}</Option>
+              <Option v-for="item in isOnlineNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
+          <!--<div class="func-btns-wrapper">
+            <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
+          </div>-->
         </div>
       </section>
+      <section class="func-btns-wrapper">
+        <div class="func-btn btn-create" @click="createAccount('create')">批量导入</div>
+        <div class="func-btn btn-create" @click="searchAccount('create')">初始化</div>
+        <div class="func-btn btn-create" @click="edit('create')">新建</div>
+      </section >
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
         <span>设备列表</span>
-        <div class="right">
-          <span>批量导入</span>
-          <span>初始化</span>
-          <span>新建</span>
-        </div>
       </div>
       <section class="table-wrapper">
         <section class="list-wrapper custom-scroll scroll">
           <custom-table :thead="thead" :tbody="tbody" :scroll="true">
             <template slot="item" slot-scope="props">
-              <td><div class="icon"><img class="imgIcon" :src="props.item.icon + '?imageView2/1/w/105/h/60'"></div></td>
-              <td><div>{{props.item.nameCn}}</div></td>
-              <td><div>{{props.item.developerName}}</div></td>
-              <td><div>{{props.item.developerType === 3 ? '企业' : props.item.developerType === 2 ? '个人' : ''}}</div></td>
-              <td><div>¥{{props.item.price}}</div></td>
-              <td><div>{{props.item.auditTime}}</div></td>
-              <td><div>{{props.item.versionStatus === 1 ? '初始版本' : props.item.versionStatus === 2 ? '有新版本' : props.item.versionStatus === 3 ? '无新版本' : '' }}</div></td>
-              <td><div>{{props.item.shelfStatus === 0 ? '待上架' : props.item.shelfStatus === 1 ? '已上架' : props.item.shelfStatus === 2 ? '已下架' : ''}}</div></td>
+              <!--<td><div class="icon"><img class="imgIcon" :src="props.item.icon + '?imageView2/1/w/105/h/60'"></div></td>-->
+              <td><div>{{props.item.genreName}}</div></td>
+              <td><div>{{props.item.typeName}}</div></td>
+              <td><div>{{props.item.equserialno}}</div></td>
+              <td><div>{{props.item.madeFactoryName}}</div></td>
+              <td><div>{{props.item.propertyName}}</div></td>
+              <td><div>{{props.item.userName}}</div></td>
+              <td><div>{{props.item.mac}}</div></td>
+              <td><div>{{props.item.uKey}}</div></td>
+              <td><div>{{props.item.PASSWORDFORSEAFILE}}</div></td>
+              <td><div>{{obtainType(props.item.userType)}}</div></td>
+              <td><div>{{props.item.iportType === 'stable' ? '稳定版' : props.item.iportType === 'beta' ? '测试版' : ''}}</div></td>
+              <td><div>{{props.item.vpnType === 'stable' ? '稳定版' : props.item.vpnType === 'beta' ? '测试版' : ''}}</div></td>
+              <td><div>{{props.item.isOnline === '1' ? '是' : '否'}}</div></td>
+              <td><div>{{props.item.initTime}}</div></td>
+              <td><div>{{props.item.leaveDate}}</div></td>
               <td class="operations-td wid-100px">
                 <div class="operations flex-center">
-                  <div class="btn btn-detail" v-if="props.item.versionStatus === 2" @click="update(props.item.appId)">更新</div>
-                  <div class="btn btn-detail gray" v-if="props.item.versionStatus !== 2">更新</div>
-                  <div class="btn btn-detail" @click.stop="readRecord(props.item.appId)">详情</div>
-                  <div class="btn btn-delete right" v-if="props.item.shelfStatus !== 1" @click="IndexUpOrDown(props.item.appId)">上架</div>
-                  <div class="btn btn-delete right" v-if="props.item.shelfStatus === 1" @click="IndexUpOrDown(props.item.appId)">下架</div>
+                  <div class="btn btn-detail" @click.stop="readRecord(props.item.equId)">初始seafile</div>
+                  <div class="btn btn-detail" @click.stop="readRecord(props.item.equId)">初始Ldap</div>
+                  <div class="btn btn-detail" @click.stop="edit('edit', props.item.equId)">编辑</div>
+                  <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.equId, props.item.serNo, props.item.equserialno)">删除</div>
                 </div>
               </td>
             </template>
@@ -126,14 +137,151 @@
 import mixinsTable from '@/utils/mixinsTable'
 // import mixinsInfo from '@/utils/mixinsInfo'
 // import { DOMAIN } from '@/utils/config'
-const thead = ['大类', '小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '初始化seafile', '初始化Ldap', '操作']
+const thead = ['大类', '小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
     return {
-      developType: [],
+      brandList: [], // 品牌
+      mainTypeListNoPage: [], // 大类
+      machineTypeByMainCode: [], // 设备类型
+      machineObtainType: [], // 获取途径
+      factory: [], // 设备制造商/使用权/所有权
       thead: thead,
-      tbody: []
+      tbody: [],
+      iportNewList: [ //  //iport类型列表
+        {id: 'stable', name: '稳定版'},
+        {id: 'beta', name: '测试版'}
+      ],
+      vpnNewList: [ // vpn类型列表
+        {id: 'stable', name: '稳定版'},
+        {id: 'beta', name: '测试版'}
+      ],
+      isOnlineNewList: [ // 是否上线列表
+        {id: '1', name: '是'},
+        {id: '0', name: '否'}
+      ],
+      deleteParams: {
+        equId: '',
+        serNo: ''
+      }
+    }
+  },
+  mounted () {
+    this.get()
+    this.getMachineList()
+    this.getBrandList()
+    this.getMainTypeListNoPage()
+    this.getMachineTypeByMainCode()
+    this.getMachineObtainType()
+    this.getFacNameAndId()
+  },
+  methods: {
+    // 编辑
+    edit (type, id) {
+      this.$router.push('/demo-page-one/detail')
+      sessionStorage.setItem('editId', id)
+      sessionStorage.setItem('editType', type)
+    },
+    obtainType (code) {
+      let obtainArr = this.machineObtainType.filter(item => {
+        return item.code === code
+      })
+      return obtainArr[0].name
+    },
+    // 删除
+    deleteMachineById (equId, serNo, equserialno) {
+      this.deleteParams.equId = equId
+      this.deleteParams.serNo = serNo
+      this.$Modal.confirm({
+        title: '提示',
+        content: `确认删除【序列号：${equserialno}】的设备么?`,
+        onOk: () => {
+        }
+      })
+      /* this.$store.dispatch('a:device/deleteMachineById', this.deleteParams).then(
+        res => {
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      ) */
+    },
+    // 获取
+    get () {
+      this.$store.dispatch('a:device/getMachineType', {}).then(
+        res => {
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取品牌
+    getBrandList () {
+      this.$store.dispatch('a:device/getBrandList', {}).then(
+        res => {
+          this.brandList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取大类
+    getMainTypeListNoPage () {
+      this.$store.dispatch('a:device/getMainTypeListNoPage', {}).then(
+        res => {
+          this.mainTypeListNoPage = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取设备类型
+    getMachineTypeByMainCode () {
+      this.$store.dispatch('a:device/getMachineTypeByMainCode', {}).then(
+        res => {
+          this.machineTypeByMainCode = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取途径
+    getMachineObtainType () {
+      this.$store.dispatch('a:device/getMachineObtainType', {}).then(
+        res => {
+          this.machineObtainType = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取设备制造商/使用权/所有权
+    getFacNameAndId () {
+      this.$store.dispatch('a:device/getFacNameAndId', {}).then(
+        res => {
+          this.factory = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取设备列表
+    getMachineList () {
+      this.$store.dispatch('a:device/getMachineList', {}).then(
+        res => {
+          this.tbody = res.content || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
     }
   }
 }
@@ -143,5 +291,18 @@ export default {
   @import '~@/assets/styles/pages/demoPageOne/Index.less';
   .right {
     color: red;
+  }
+  .filter-line input , .select-wrapper{
+    width: 210px;
+  }
+  .btn-detail {
+    margin-right: 10px;
+  }
+  .list-wrapper {
+    margin-top: 0;
+    border: none;
+  }
+  .func-btns-wrapper {
+    margin-bottom: 10px;
   }
 </style>

@@ -3,7 +3,7 @@
     <div class="header">
       <div class="left">
         <i class="iconfont icon-diagnose-logo"></i>
-        <span>XXXX XXXX 系统</span>
+        <span>设备数据管理平台</span>
       </div>
       <div class="right">
         <span class="usericon"><img src="~@/assets/images/usericon.png" alt=""></span>
@@ -30,7 +30,12 @@ export default {
     // 登出
     logout () {
       sessionStorage.clear()
-      location.replace(DOMAIN.oncallSite)
+      // 判断是线上还是本地环境
+      if (location.hostname === 'localhost') {
+        location.replace('http://' + location.host)
+      } else {
+        location.replace(DOMAIN.origin)
+      }
     }
   }
 }

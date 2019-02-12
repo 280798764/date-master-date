@@ -1,6 +1,6 @@
 <template>
   <section class="footer-wapper">
-      <span>版权信息</span>
+      <span>Copyright©2004-2016  iSESOL版权所有</span>
     </section>
 </template>
 

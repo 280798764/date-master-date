@@ -1,15 +1,16 @@
 import layout from '@/components/layout/Index'
 
-const index = resolve => require(['@/components/pages/homepage/Index'], resolve)
+const homepageIndex = resolve => require(['@/components/pages/homepage/Index'], resolve)
 
 const routes = [
   {
-    path: '/index',
+    // path: '/index',
+    path: '',
     component: layout,
     children: [
       {
         path: '',
-        component: index
+        component: homepageIndex
       }
     ]
   }

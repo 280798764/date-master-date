@@ -15,21 +15,6 @@ const navList = [{
     {
       name: '设备管理',
       path: '/demo-page-one/index'
-    },
-    {
-      name: '子页面2',
-      path: '/demo-page-one/detail'
-    }
-  ]
-},
-{
-  name: '示例页面3',
-  icon: 'nav-apply-audit',
-  isOpen: true,
-  children: [
-    {
-      name: '子页面1',
-      path: '/demo-page-two'
     }
   ]
 }]
