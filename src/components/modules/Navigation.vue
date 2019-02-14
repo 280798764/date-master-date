@@ -3,7 +3,7 @@
     <ul v-for="(nav, index) in dataNavList" :key="index">
       <li class="parent" @click="toggleNav(index)">
         <i class="iconfont" :class="nav.icon"></i>
-        <span>{{nav.name}}</span>
+        <span>{{nav.label}}</span>
         <i class="iconfont" :class="nav.isOpen?'nav-arrow-up':'nav-arrow-down'"></i>
       </li>
       <li v-show="nav.isOpen" v-for="(subnav, subIndex) in nav.children" class="child" :key="subIndex">

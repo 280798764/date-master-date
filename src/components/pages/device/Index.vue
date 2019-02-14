@@ -11,34 +11,41 @@
         <div class="filter-line">
           <label>品牌</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+                <Select v-model="params.brand" filterable>
+                  <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+                </Select>
+              </Col>
+            </Row>
+           <!-- <Select clearable v-model="params.brand">
               <Option v-for="item in brandList" :value="item.code" :key="item.code">{{item.name}}</Option>
-            </Select>
+            </Select>-->
           </div>
           <label>大类</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.mainTypeCode">
               <Option v-for="item in mainTypeListNoPage" :value="item.id" :key="item.id">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>设备类型</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.symgMachineTypeId">
               <Option v-for="item in machineTypeByMainCode" :value="item.symgMachineTypeId" :key="item.symgMachineTypeId">{{item.symgMtName}}</Option>
             </Select>
           </div>
         </div>
         <div class="filter-line">
-          <label class="app-name-dev special-first">设备序列号</label><input type="text">
+          <label class="app-name-dev special-first">设备序列号</label><input type="text" v-model="params.symgMSerialNo">
           <label>设备制造商</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.madeFactoryId">
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
           <label>所有权</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.orgNameId">
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
@@ -46,29 +53,29 @@
         <div class="filter-line">
           <label>使用权</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.userNameId">
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
-          <label class="app-name-dev special-first">MAC</label><input type="text">
-          <label class="app-name-dev special-first">UKEY</label><input type="text">
+          <label class="app-name-dev special-first">MAC</label><input type="text" v-model="params.mac">
+          <label class="app-name-dev special-first">UKEY</label><input type="text" v-model="params.uKey">
         </div>
         <div class="filter-line">
           <label>获取途径</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.haveType">
               <Option v-for="item in machineObtainType" :value="item.code" :key="item.code">{{item.name}}</Option>
             </Select>
           </div>
           <label>iport类型</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.iportType">
               <Option v-for="item in iportNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
           <label>vpn更新</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.vpnType">
               <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
@@ -76,13 +83,13 @@
         <div class="filter-line">
           <label>是否上线</label>
           <div class="select-wrapper">
-            <Select clearable>
+            <Select clearable v-model="params.isOnline">
               <Option v-for="item in isOnlineNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
-          <!--<div class="func-btns-wrapper">
+          <div class="func-btns-wrapper search-reset">
             <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
-          </div>-->
+          </div>
         </div>
       </section>
       <section class="func-btns-wrapper">
@@ -124,7 +131,20 @@
               </td>
             </template>
           </custom-table>
-          <!--<pagination v-if="pageInfo.totalPageCount" :pageInfo="pageInfo" @pageChange="pageChange"></pagination>-->
+          <div style="margin: 20px auto" class="pageStyle">
+            <div class="left">
+              <span>跳转至</span>
+              <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
+              <span>页</span>
+            </div>
+            <Page :total="pageInfo.totalPages" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+            <div class="total-pages">
+              <span>共</span>
+              <span class="count">{{pageInfo.totalPages}}</span>
+              <span>页</span>
+            </div>
+          </div>
+          <!--<pagination v-if="pageInfo.totalElements" :pageInfo="pageInfo" @pageChange="pageChange"></pagination>-->
         </section>
       </section>
 
@@ -142,6 +162,22 @@ export default {
   mixins: [mixinsTable],
   data () {
     return {
+      pageNo: '',
+      cmd: 'a:device/getMachineList',
+      params: {
+        brand: '',
+        haveType: '',
+        iportType: '',
+        isOnline: '',
+        mac: '',
+        mainTypeCode: '',
+        orgNameId: '',
+        symgMSerialNo: '',
+        symgMachineTypeId: '',
+        uKey: '',
+        userNameId: '',
+        vpnType: ''
+      },
       brandList: [], // 品牌
       mainTypeListNoPage: [], // 大类
       machineTypeByMainCode: [], // 设备类型
@@ -169,7 +205,8 @@ export default {
   },
   mounted () {
     this.get()
-    this.getMachineList()
+    this.getTableList(this.cmd, this.params)
+    // this.getMachineList()
     this.getBrandList()
     this.getMainTypeListNoPage()
     this.getMachineTypeByMainCode()
@@ -177,9 +214,30 @@ export default {
     this.getFacNameAndId()
   },
   methods: {
+    searchTab () {
+      this.getTableList(this.cmd, this.params, this.pageInfoReq)
+    },
+    jumpTo () {
+      this.pageChange()
+    },
+    pageChange () {
+      let pages = Math.ceil(this.pageInfo.totalCount / 10)
+      if (this.pageNo > pages || this.pageNo <= 0) {
+        this.alert('请输入正确的页码！', 'error')
+      } else {
+        this.pageInfoReq.page = this.pageNo
+        this.pageInfo.page = +this.pageNo
+        this.getTableList(this.cmd, this.params, this.pageInfoReq)
+      }
+    },
+    changepage (index) {
+      this.pageInfoReq.page = index
+      this.getTableList(this.cmd, this.params, this.pageInfoReq)
+      this.pageNo = index
+    },
     // 编辑
     edit (type, id) {
-      this.$router.push('/demo-page-one/detail')
+      this.$router.push('/device/detail')
       sessionStorage.setItem('editId', id)
       sessionStorage.setItem('editType', type)
     },
@@ -288,7 +346,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '~@/assets/styles/pages/demoPageOne/Index.less';
+  @import '~@/assets/styles/pages/device/Index.less';
   .right {
     color: red;
   }
@@ -305,4 +363,10 @@ export default {
   .func-btns-wrapper {
     margin-bottom: 10px;
   }
+/*.func-btns-wrapper {
+  border: none;
+  height: 1px !important;
+  margin-top: 10px;
+  margin-left: 20px;
+}*/
 </style>

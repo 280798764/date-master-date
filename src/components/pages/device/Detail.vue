@@ -155,10 +155,13 @@ export default {
     }
   },
   methods: {
+    searchTab () {
+
+    },
     edit () {
       this.$store.dispatch('a:device/updateMachineById', this.detailInfo).then(
         res => {
-          this.$router.push('/demo-page-one/index')
+          this.$router.push('/device/index')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
@@ -168,7 +171,7 @@ export default {
     save () {
       this.$store.dispatch('a:device/saveMachine', this.detailInfo).then(
         res => {
-          this.$router.push('/demo-page-one/index')
+          this.$router.push('/device/index')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
@@ -186,7 +189,7 @@ export default {
       )
     },
     backForward () {
-      this.$router.push('/demo-page-one/index')
+      this.$router.push('/device/index')
     },
     // 获取品牌
     getBrandList () {
@@ -248,7 +251,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '~@/assets/styles/pages/demoPageOne/Detail.less';
+  @import '~@/assets/styles/pages/device/Detail.less';
   .filter-line input , .select-wrapper{
     width: 210px;
   }

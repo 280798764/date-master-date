@@ -73,10 +73,18 @@ export default {
     },
     // 获取表单数据通用方法
     getTableList (cmd, params) {
-      this.$store.dispatch(cmd, {parameters: {...params}, ...this.pageInfoReq}).then(
+      this.$store.dispatch(cmd, {...params}, ...this.pageInfoReq).then(
         res => {
-          this.tbody = res.list
-          this.pageInfo = res.pageInfo
+          this.tbody = res.content || []
+          // 把pageInfo封装成对象
+          if (res) {
+            for (let item in res) {
+              if (!Array.isArray(item)) {
+                this.pageInfo[item] = res[item]
+              }
+            }
+          }
+          // this.pageInfo = res.pageInfo
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

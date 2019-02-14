@@ -3,7 +3,13 @@ import Router from 'vue-router'
 import iview from 'iview'
 import login from './routes/login'
 import homepage from './routes/homepage'
-import demoPageOne from './routes/demoPageOne'
+import device from './routes/device'
+import systemBig from './routes/systemBig'
+import equipmentOperation from './routes/equipmentOperation'
+import systemMall from './routes/systemMall'
+import typalMap from './routes/typalMap'
+import equipmenBig from './routes/equipmenBig'
+import equipmenMall from './routes/equipmenMall'
 
 Vue.use(Router)
 
@@ -11,7 +17,13 @@ const router = new Router({
   routes: [
     ...login,
     ...homepage,
-    ...demoPageOne,
+    ...device,
+    ...systemBig,
+    ...equipmentOperation,
+    ...systemMall,
+    ...typalMap,
+    ...equipmenBig,
+    ...equipmenMall,
     {
       path: '/*',
       redirect: to => {
