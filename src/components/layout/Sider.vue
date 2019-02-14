@@ -7,7 +7,7 @@
   <section class="nav-wrapper">
     <div>
       <ul v-for="(nav, i) in navList" :key="i" @click="firstIndex">
-        <li class="parent" @click="toggleSubNav(nav, i)" :class="{navBg: nav[url] === this.$router}">
+        <li class="parent" @click="toggleSubNav(nav, i)">
           <!--<i class="iconfont" :class="idToIcon[nav.moduleId]"></i>-->
           <span>{{nav.moduleName}}</span>
           <!--<i class="iconfont" :class="nav.isOpen?'icon-less':'icon-moreunfold'" v-if="nav.isOpen" ></i>
@@ -70,7 +70,6 @@ export default {
   },
   mounted () {
     this.navList = JSON.parse(sessionStorage.getItem('routerList'))
-    console.log(this.navList, 'routerList')
   },
   methods: {
     firstIndex () {},

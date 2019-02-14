@@ -1,6 +1,6 @@
 /* 这里是页面备注 */
 <template>
-  <section style="background-color: #eee;">
+  <section class="wrapper-box">
     <div class="wrap">
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
@@ -13,9 +13,9 @@
           <div class="select-wrapper">
             <Row>
               <Col span="40" style="padding-right:10px">
-                <Select v-model="params.brand" filterable>
-                  <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
-                </Select>
+              <Select v-model="params.brand" filterable>
+                <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+              </Select>
               </Col>
             </Row>
            <!-- <Select clearable v-model="params.brand">
@@ -235,7 +235,7 @@ export default {
       this.getTableList(this.cmd, this.params, this.pageInfoReq)
       this.pageNo = index
     },
-    // 编辑
+    // 编辑/新建
     edit (type, id) {
       this.$router.push('/device/detail')
       sessionStorage.setItem('editId', id)
@@ -363,10 +363,4 @@ export default {
   .func-btns-wrapper {
     margin-bottom: 10px;
   }
-/*.func-btns-wrapper {
-  border: none;
-  height: 1px !important;
-  margin-top: 10px;
-  margin-left: 20px;
-}*/
 </style>

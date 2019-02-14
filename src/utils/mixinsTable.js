@@ -76,14 +76,15 @@ export default {
       this.$store.dispatch(cmd, {...params}, ...this.pageInfoReq).then(
         res => {
           this.tbody = res.content || []
+          this.pageInfo = res || []
           // 把pageInfo封装成对象
-          if (res) {
+          /* if (res) {
             for (let item in res) {
               if (!Array.isArray(item)) {
                 this.pageInfo[item] = res[item]
               }
             }
-          }
+          } */
           // this.pageInfo = res.pageInfo
         },
         rej => {

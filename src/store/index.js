@@ -7,6 +7,7 @@ import file from './stores/file'
 import homepage from './stores/homepage'
 import device from './stores/device'
 import login from './stores/login'
+import systemBig from './stores/systemBig'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     file,
     homepage,
     device,
-    login
+    login,
+    systemBig
   }
 })

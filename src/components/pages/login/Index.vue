@@ -139,7 +139,6 @@ export default {
         res => {
           this.routerList = res || []
           sessionStorage.setItem('routerList', JSON.stringify(res || []))
-          console.log(res, 999)
           // this.$router.push('/manageEquipmentType/index')
           // debugger
           if (this.routerList.length) {
