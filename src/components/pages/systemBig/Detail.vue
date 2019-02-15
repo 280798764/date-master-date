@@ -9,17 +9,17 @@
       <div class="filter-line">
         <label>CODE</label>
         <span class="require">*</span>
-        <input type="text" v-model.trim="detailInfo.equserialno">
+        <input type="text" v-model.trim="detailInfo.mainType.mainTypeCode">
         <label>名称</label>
         <span class="require">*</span>
-        <input type="text" v-model.trim="detailInfo.equserialno">
+        <input type="text" v-model.trim="detailInfo.mainType.genreName">
       </div>
       <div class="filter-line">
         <label>品牌</label>
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
+            <Select v-model="detailInfo.mainType.brand" filterable>
               <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
             </Select>
             </Col>
@@ -30,19 +30,19 @@
         <label>描述</label>
         <span class="require">*</span>
         <div>
-          <textarea name="" id="" cols="50" rows="10" class="textarea"></textarea>
+          <textarea name="" id="" cols="50" rows="10" class="textarea" v-model="detailInfo.mainType.description"></textarea>
         </div>
       </div>
       <div class="filter-line">
         <label>图片标题</label>
-        <input type="text" v-model.trim="detailInfo.equserialno">
+        <input type="text" v-model.trim="picList.picTitle">
         <label>图片URL</label>
-        <input type="text" v-model.trim="detailInfo.equserialno">
+        <input type="text" v-model.trim="picList.picPath">
       </div>
       <div class="filter-line reset-height">
         <label>图片预览</label>
         <div class="imgBox">
-          <img src="" alt="">
+          <img :src="picList.picPath" alt="">
         </div>
       </div>
       <!-- 底部功能按钮 -->
@@ -64,13 +64,21 @@ export default {
         mainTypeId: ''
       },
       inTotype: '',
-      detailInfo: {},
+      detailInfo: {
+        mainType: {
+          brand: '',
+          description: '',
+          genreName: '',
+          mainTypeCode: ''
+        }
+      },
+      picList: [],
       brandList: [] // 品牌
     }
   },
   mounted () {
     this.getBrandList()
-    this.params.mainTypeId = sessionStorage.getItem('editId')
+    this.params.mainTypeId = JSON.parse(sessionStorage.getItem('editId'))
     this.inTotype = sessionStorage.getItem('editType')
     if (this.inTotype === 'edit') {
       this.detail()
@@ -78,14 +86,17 @@ export default {
   },
   methods: {
     detail () {
-      this.$store.dispatch('a:device/getMachineById', this.params).then(
+      this.$store.dispatch('a:systemBig/getMainTypeById', this.params).then(
         res => {
           this.detailInfo = res || {}
+          this.picList = res.picList[0] || []
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
         }
       )
+    },
+    edit () {
     },
     save () {
     },

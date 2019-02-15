@@ -8,6 +8,9 @@ import homepage from './stores/homepage'
 import device from './stores/device'
 import login from './stores/login'
 import systemBig from './stores/systemBig'
+import equipmentOperation from './stores/equipmentOperation'
+import systemMall from './stores/systemMall'
+import typalMap from './stores/typalMap'
 
 Vue.use(Vuex)
 
@@ -19,6 +22,9 @@ export default new Vuex.Store({
     homepage,
     device,
     login,
-    systemBig
+    systemBig,
+    equipmentOperation,
+    systemMall,
+    typalMap
   }
 })

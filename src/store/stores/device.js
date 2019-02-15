@@ -23,7 +23,7 @@ const actions = {
       parameters: params
     })
   },
-  /* 获取品牌 */
+  /* 获取设备类型 */
   'a:device/getMachineTypeByMainCode' ({commit}, params) {
     return ajax.api({
       cmd: 'ime-sys/machineManage/getMachineTypeByMainCode',
@@ -45,10 +45,10 @@ const actions = {
     })
   },
   /* 获取列表 */
-  'a:device/getMachineList' ({commit}, params) {
+  'a:device/getMachineList' ({commit}, parameters = {}) {
     return ajax.api({
       cmd: 'ime-sys/machineManage/getMachineList',
-      parameters: params
+      ...parameters
     })
   },
   /* 读取详情 */

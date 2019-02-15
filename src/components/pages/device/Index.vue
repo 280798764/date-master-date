@@ -137,7 +137,7 @@
               <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
               <span>页</span>
             </div>
-            <Page :total="pageInfo.totalPages" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+            <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
             <div class="total-pages">
               <span>共</span>
               <span class="count">{{pageInfo.totalPages}}</span>

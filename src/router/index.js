@@ -15,6 +15,10 @@ Vue.use(Router)
 
 const router = new Router({
   routes: [
+    {
+      path: '/',
+      redirect: '/login'
+    },
     ...login,
     ...homepage,
     ...device,
@@ -27,7 +31,7 @@ const router = new Router({
     {
       path: '/*',
       redirect: to => {
-        return '/index'
+        return '/login'
       }
     }
   ]

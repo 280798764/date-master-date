@@ -98,7 +98,7 @@ export default {
     // 编辑/新建
     edit (type, id) {
       this.$router.push('/systemBig/detail')
-      sessionStorage.setItem('editId', id)
+      sessionStorage.setItem('editId', JSON.stringify(id))
       sessionStorage.setItem('editType', type)
     },
     deleteMachineById () {},

@@ -7,7 +7,7 @@ export default {
     return {
       pageInfo: {}, // 接收的分页信息
       pageInfoReq: { // 用于请求的分页信息
-        page: 1,
+        page: 0,
         rows: 10
       },
       isShowDlgConfirmReason: false, // 确认弹窗标识（需要原因）
@@ -56,7 +56,7 @@ export default {
   methods: {
     // 点击查询按钮或者回车查询，重置页码为1
     searchBtn () {
-      this.pageInfoReq.page = 1
+      this.pageInfoReq.page = 0
       this.search()
     },
     // 保存过滤参数及页码
@@ -73,7 +73,11 @@ export default {
     },
     // 获取表单数据通用方法
     getTableList (cmd, params) {
-      this.$store.dispatch(cmd, {...params}, ...this.pageInfoReq).then(
+      this.$store.dispatch(cmd, {
+        page: this.pageInfoReq.page,
+        rows: this.pageInfoReq.rows,
+        parameters: params
+      }).then(
         res => {
           this.tbody = res.content || []
           this.pageInfo = res || []

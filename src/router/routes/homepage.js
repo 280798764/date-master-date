@@ -4,12 +4,11 @@ const homepageIndex = resolve => require(['@/components/pages/homepage/Index'], 
 
 const routes = [
   {
-    // path: '/index',
-    path: '',
+    path: '/home',
     component: layout,
     children: [
       {
-        path: '',
+        path: '/homepageIndex',
         component: homepageIndex
       }
     ]
