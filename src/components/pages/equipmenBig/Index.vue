@@ -97,7 +97,11 @@ export default {
         onOk: () => {
           this.$store.dispatch('a:equipmenBig/deleteIboxMainType', this.deleteParams).then(
             res => {
-              this.getTableList(this.cmd, this.params)
+              if (res.success) {
+                this.getTableList(this.cmd, this.params)
+              } else {
+                this.alert(res.msg, 'error')
+              }
             },
             rej => {
               this.alert(rej.errorInfo, 'error')

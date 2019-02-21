@@ -7,23 +7,22 @@
     </div>
     <section class="filter-wrapper">
       <div class="filter-line">
-        <label>CODE <span class="require">*</span></label>
-        <input type="text" v-if="params.id" v-model.trim="resInfo.mainCode" readonly="">
-        <input type="text" v-else v-model.trim="resInfo.mainCode" >
-        <label>名称  <span class="require">*</span></label>
-        <input type="text" v-model.trim="resInfo.name">
-      </div>
-      <div class="filter-line">
-        <label>品牌</label>
+        <label>大类名称</label>
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="resInfo.brand" filterable clearable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+            <Select v-model="resInfo.mainTypeCode" filterable clearable>
+              <Option v-for="item in mainTypeName" :value="item.mainTypeCode" :key="item.mainTypeCode">{{ item.mainTypeName }}</Option>
             </Select>
             </Col>
           </Row>
         </div>
+        <label>小类CODE  <span class="require">*</span></label>
+        <input type="text" v-model.trim="resInfo.code" :readonly="params.typeId !== ''">
+      </div>
+      <div class="filter-line">
+        <label>小类名称 <span class="require">*</span></label>
+        <input type="text" v-model.trim="resInfo.name">
       </div>
       <div class="filter-line reset-height">
         <label>描述 <span class="require">*</span></label>
@@ -47,22 +46,22 @@ export default {
   data () {
     return {
       params: {
-        id: ''
+        typeId: ''
       },
       inTotype: '',
-      brandList: [], // 品牌
+      mainTypeName: [], // 品牌
       resInfo: {
         id: '',
-        brand: '',
-        descript: '',
-        mainCode: '',
-        name: ''
+        mainTypeName: '', // 大类名称
+        descript: '', // 描述
+        typeCode: '', // 小类code
+        typeName: ''// 小类名称
       }
     }
   },
   mounted () {
-    this.getBrandList()
-    this.params.id = JSON.parse(sessionStorage.getItem('editId'))
+    this.getMainTypeName()
+    this.params.typeId = JSON.parse(sessionStorage.getItem('editId'))
     this.resInfo.id = JSON.parse(sessionStorage.getItem('editId'))
     this.inTotype = sessionStorage.getItem('editType')
     if (this.inTotype === 'edit') {
@@ -71,13 +70,13 @@ export default {
   },
   methods: {
     detail () {
-      if (this.params.id) {
-        this.$store.dispatch('a:equipmenBig/getMainTypeById', this.params).then(
+      if (this.params.typeId) {
+        this.$store.dispatch('a:equipmenMall/getIboxTypeById', this.params).then(
           res => {
-            this.resInfo.brand = res.brand || ''
+            this.resInfo.mainTypeCode = res.mainTypeCode || ''
             this.resInfo.descript = res.descript || ''
-            this.resInfo.mainCode = res.mainTypeCode || ''
-            this.resInfo.name = res.mainTypeName || ''
+            this.resInfo.code = res.typeCode || ''
+            this.resInfo.name = res.typeName || ''
           },
           rej => {
             this.alert(rej.errorInfo, 'error')
@@ -88,19 +87,20 @@ export default {
       }
     },
     edit () {
-      this.$store.dispatch('a:equipmenBig/updataIboxMainType', this.resInfo).then(
+      this.$store.dispatch('a:equipmenMall/updataIboxType', this.resInfo).then(
         res => {
-          this.$router.push('/equipmenBig/index')
+          this.$router.push('/equipmenMall/index')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
         }
       )
     },
+    // 新建
     save () {
-      this.$store.dispatch('a:equipmenBig/saveIboxMainType', this.resInfo).then(
+      this.$store.dispatch('a:equipmenMall/saveIboxType', this.resInfo).then(
         res => {
-          this.$router.push('/equipmenBig/index')
+          this.$router.push('/equipmenMall/index')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
@@ -108,13 +108,14 @@ export default {
       )
     },
     backForward () {
-      this.$router.push('/equipmenBig/index')
+      this.$router.push('/equipmenMall/index')
     },
-    // 获取品牌
-    getBrandList () {
-      this.$store.dispatch('a:equipmenBig/getBrandList', {}).then(
+    // 获取大类名称
+    getMainTypeName () {
+      this.$store.dispatch('a:equipmenMall/getIboxMainTypeListNoPage', {}).then(
         res => {
-          this.brandList = res || []
+          this.mainTypeName = res || []
+          console.log(res)
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

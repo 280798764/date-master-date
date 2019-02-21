@@ -21,13 +21,13 @@
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brandCode" filterable clearable>
+            <Select v-model="params.mainTypeCode" filterable clearable>
               <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{ item.mainTypeName }}</Option>
             </Select>
             </Col>
           </Row>
         </div>
-        <label class="app-name-dev special-first">大类名称</label><input type="text" v-model="params.name">
+        <label class="app-name-dev special-first">设备小类名称</label><input type="text" v-model="params.name">
         <div class="func-btns-wrapper search-reset">
           <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
         </div>
@@ -51,8 +51,8 @@
             <td><div>{{props.item.descript}}</div></td>
             <td class="operations-td wid-100px">
               <div class="operations flex-center">
-                <div class="btn btn-detail" @click.stop="edit('edit', props.item.id)">编辑</div>
-                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.id)">删除</div>
+                <div class="btn btn-detail" @click.stop="edit('edit', props.item.typeId)">编辑</div>
+                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.typeId)">删除</div>
               </div>
             </td>
           </template>
@@ -103,14 +103,18 @@ export default {
   methods: {
     // 删除
     deleteMachineById (id) {
-      this.deleteParams.id = id
+      this.deleteParams.typeId = id
       this.$Modal.confirm({
         title: '提示',
         content: `确认删除【ID：${id}】的设备大类吗?`,
         onOk: () => {
-          this.$store.dispatch('a:equipmenBig/deleteIboxMainType', this.deleteParams).then(
+          this.$store.dispatch('a:equipmenMall/deleteIboxType', this.deleteParams).then(
             res => {
-              this.getTableList(this.cmd, this.params)
+              if (res.success) {
+                this.getTableList(this.cmd, this.params)
+              } else {
+                this.alert(res.msg, 'error')
+              }
             },
             rej => {
               this.alert(rej.errorInfo, 'error')
@@ -121,7 +125,7 @@ export default {
     },
     // 编辑/新建
     edit (type, id) {
-      this.$router.push('/equipmenBig/detail')
+      this.$router.push('/equipmenMall/detail')
       sessionStorage.setItem('editType', type)
       if (type === 'edit') {
         sessionStorage.setItem('editId', JSON.stringify(id))
@@ -134,7 +138,7 @@ export default {
     },
     // 获取品牌
     getBrandList () {
-      this.$store.dispatch('a:device/getBrandList', {}).then(
+      this.$store.dispatch('a:equipmenMall/getBrandList', {}).then(
         res => {
           this.brandList = res || []
         },
@@ -143,12 +147,11 @@ export default {
         }
       )
     },
-    // 获取品牌
+    // 获取大类名称
     getIboxMainTypeList () {
       this.$store.dispatch('a:equipmenMall/getIboxMainTypeListNoPage', {}).then(
         res => {
           this.iboxMainTypeList = res || []
-          console.log(res, 'res')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
