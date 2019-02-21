@@ -11,6 +11,8 @@ import systemBig from './stores/systemBig'
 import equipmentOperation from './stores/equipmentOperation'
 import systemMall from './stores/systemMall'
 import typalMap from './stores/typalMap'
+import equipmenBig from './stores/equipmenBig'
+import equipmenMall from './stores/equipmenMall'
 
 Vue.use(Vuex)
 
@@ -25,6 +27,8 @@ export default new Vuex.Store({
     systemBig,
     equipmentOperation,
     systemMall,
-    typalMap
+    typalMap,
+    equipmenBig,
+    equipmenMall
   }
 })

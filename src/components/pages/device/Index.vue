@@ -253,7 +253,7 @@ export default {
       this.deleteParams.serNo = serNo
       this.$Modal.confirm({
         title: '提示',
-        content: `确认删除【序列号：${equserialno}】的设备么?`,
+        content: `确认删除【序列号：${equserialno}】的设备吗?`,
         onOk: () => {
         }
       })

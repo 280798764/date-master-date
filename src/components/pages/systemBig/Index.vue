@@ -11,13 +11,13 @@
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
-              <Select v-model="params.brand" filterable>
+              <Select v-model="params.brand" filterable clearable>
                 <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
               </Select>
             </Col>
           </Row>
         </div>
-        <label class="app-name-dev special-first">大类名称</label><input type="text" v-model="params.typeName">
+        <label class="app-name-dev special-first">大类名称</label><input type="text" v-model="params.name">
         <div class="func-btns-wrapper search-reset">
           <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
         </div>
@@ -36,21 +36,21 @@
           <template slot="item" slot-scope="props">
             <td><div>{{props.item.mainTypeCode}}</div></td>
             <td><div>{{props.item.genreName}}</div></td>
-            <td><div>{{brandFun(props.item.brand)}}</div></td>
+            <td><div>{{brandFun(props.item.brand) || ''}}</div></td>
             <td><div>{{props.item.description}}</div></td>
             <td class="operations-td wid-100px">
               <div class="operations flex-center">
                 <div class="btn btn-detail" @click.stop="edit('edit', props.item.id)">编辑</div>
-                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.equId, props.item.serNo, props.item.equserialno)">删除</div>
+                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.id)">删除</div>
               </div>
             </td>
           </template>
         </custom-table>
         <div style="margin: 20px auto" class="pageStyle">
           <div class="left">
-            <span>跳转至</span>
+           <!-- <span>跳转至</span>
             <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
-            <span>页</span>
+            <span>页</span>-->
           </div>
           <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
           <div class="total-pages">
@@ -77,10 +77,13 @@ export default {
       tbody: [],
       thead: thead,
       params: {
-        brand: '',
-        typeName: ''
+        brand: '', // 品牌
+        name: '' // 大类名称
       },
-      brandList: [] // 品牌
+      brandList: [], // 品牌
+      deleteParams: {
+        mainTypeId: ''
+      }
     }
   },
   mounted () {
@@ -88,20 +91,47 @@ export default {
     this.getTableList(this.cmd, this.params)
   },
   methods: {
-    brandFun (code) {
-      let brand = this.brandList.filter(item => {
-        return item.code === code
+    // 删除
+    deleteMachineById (id) {
+      this.deleteParams.mainTypeId = id
+      this.$Modal.confirm({
+        title: '提示',
+        content: `确认删除【ID：${id}】的设备大类吗?`,
+        onOk: () => {
+          this.$store.dispatch('a:systemBig/deleteMainTypeById', this.deleteParams).then(
+            res => {
+              this.getTableList(this.cmd, this.params)
+            },
+            rej => {
+              this.alert(rej.errorInfo, 'error')
+            }
+          )
+        }
       })
-      return brand[0].name
     },
-    searchTab () {},
+    brandFun (code) {
+      if (code) {
+        let brand = this.brandList.filter(item => {
+          return item.code === code
+        })
+        return brand[0].name || ''
+      } else {
+        return ''
+      }
+    },
+    searchTab () {
+      this.getTableList(this.cmd, this.params)
+    },
     // 编辑/新建
     edit (type, id) {
       this.$router.push('/systemBig/detail')
-      sessionStorage.setItem('editId', JSON.stringify(id))
       sessionStorage.setItem('editType', type)
+      if (type === 'edit') {
+        sessionStorage.setItem('editId', JSON.stringify(id))
+      } else {
+        sessionStorage.setItem('editId', JSON.stringify(''))
+      }
     },
-    deleteMachineById () {},
     jumpTo () {
       this.pageChange()
     },
@@ -116,13 +146,13 @@ export default {
       }
     },
     changepage (index) {
-      this.pageInfoReq.page = index
+      this.pageInfoReq.page = index - 1
       this.getTableList(this.cmd, this.params, this.pageInfoReq)
       this.pageNo = index
     },
     // 获取品牌
     getBrandList () {
-      this.$store.dispatch('a:device/getBrandList', {}).then(
+      this.$store.dispatch('a:equipmenBig/getBrandList', {}).then(
         res => {
           this.brandList = res || []
         },

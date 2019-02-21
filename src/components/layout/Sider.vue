@@ -7,15 +7,7 @@
   <section class="nav-wrapper">
     <div>
       <ul v-for="(nav, i) in navList" :key="i" @click="firstIndex">
-        <li class="parent" @click="toggleSubNav(nav, i)">
-          <!--<i class="iconfont" :class="idToIcon[nav.moduleId]"></i>-->
-          <span>{{nav.moduleName}}</span>
-          <!--<i class="iconfont" :class="nav.isOpen?'icon-less':'icon-moreunfold'" v-if="nav.isOpen" ></i>
-          <i class="iconfont" :class="nav.isOpen?'icon-less':'icon-moreunfold'" v-if="!nav.isOpen"></i>-->
-        </li>
-       <!-- <li v-show="nav.isOpen" v-for="(subnav, index) in nav.pages" class="child" @click="clearFilterParams" :key="index">
-          <router-link tag="div" :to="idToPath[subnav.url]">{{subnav.pageName}}</router-link>
-        </li>-->
+        <router-link tag="div" :to="idToPath[nav.url]" class="parent">{{nav.moduleName}}</router-link>
       </ul>
     </div>
   </section>
@@ -62,7 +54,9 @@ export default {
     return {
       navList: [],
       idToIcon: idToIcon,
-      idToPath: idToPath
+      idToPath: idToPath,
+      navBgFlag: false,
+      index: 0
     }
   },
   components: {
@@ -74,8 +68,12 @@ export default {
   methods: {
     firstIndex () {},
     clearFilterParams () {},
-    toggleSubNav (nav) {
-      this.$router.push(this.idToPath[nav.url])
+    toggleSubNav (nav, i) {
+      // this.$router.push(this.idToPath[nav.url])
+      // this.index = this.navList.indexOf(nav)
+      /* if (i === index) {
+        this.navBgFlag = true
+      } */
     }
   }
 }
@@ -91,6 +89,16 @@ export default {
     cursor: pointer;
     list-style: none;
     user-select: none;
+    line-height: 52px;
+    width: 100%;
+    box-sizing: border-box;
+    div {
+      width: 100%;
+      padding-left: 15px;
+    }
+    /*div {
+      margin-left: 15px;
+    }*/
   &:not(:first-child) {
      border-top: 1px solid #F4E9E9;
    }
@@ -147,8 +155,10 @@ export default {
     cursor: pointer;
     border-top: 1px solid #F4E9E9;
   }
-  .navBg {
+  .router-link-active {
     background-color: #FABF40;
   }
-
+  ui:hover {
+    background: #e5e8ee;
+  }
 </style>
