@@ -52,10 +52,10 @@ export default {
       mainTypeName: [], // 品牌
       resInfo: {
         id: '',
-        mainTypeName: '', // 大类名称
+        mainTypeCode: '', // 大类名称code
         descript: '', // 描述
-        typeCode: '', // 小类code
-        typeName: ''// 小类名称
+        code: '', // 小类code
+        name: ''// 小类名称
       }
     }
   },
@@ -86,7 +86,27 @@ export default {
         this.resInfo = {}
       }
     },
+    // 校验是否为空
+    empty () {
+      if (!this.resInfo.mainTypeCode) {
+        this.alert('大类名称不能为空！', 'error')
+        return false
+      } else if (!this.resInfo.code) {
+        this.alert('小类code不能为空！', 'error')
+        return false
+      } else if (!this.resInfo.name) {
+        this.alert('小类名称不能为空！', 'error')
+        return false
+      } else if (!this.resInfo.descript) {
+        this.alert('描述不能为空！', 'error')
+        return false
+      }
+      return true
+    },
     edit () {
+      if (!this.empty()) {
+        return
+      }
       this.$store.dispatch('a:equipmenMall/updataIboxType', this.resInfo).then(
         res => {
           this.$router.push('/equipmenMall/index')
@@ -98,6 +118,9 @@ export default {
     },
     // 新建
     save () {
+      if (!this.empty()) {
+        return
+      }
       this.$store.dispatch('a:equipmenMall/saveIboxType', this.resInfo).then(
         res => {
           this.$router.push('/equipmenMall/index')
@@ -115,7 +138,6 @@ export default {
       this.$store.dispatch('a:equipmenMall/getIboxMainTypeListNoPage', {}).then(
         res => {
           this.mainTypeName = res || []
-          console.log(res)
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

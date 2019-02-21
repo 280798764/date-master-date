@@ -88,6 +88,9 @@ export default {
       }
     },
     edit () {
+      if (!this.empty()) {
+        return
+      }
       this.$store.dispatch('a:equipmenBig/updataIboxMainType', this.resInfo).then(
         res => {
           this.$router.push('/equipmenBig/index')
@@ -97,7 +100,23 @@ export default {
         }
       )
     },
+    empty () {
+      if (!this.resInfo.mainCode) {
+        this.alert('CODE不能为空！', 'error')
+        return false
+      } else if (!this.resInfo.name) {
+        this.alert('名称不能为空！', 'error')
+        return false
+      } else if (!this.resInfo.descript) {
+        this.alert('描述不能为空！', 'error')
+        return false
+      }
+      return true
+    },
     save () {
+      if (!this.empty()) {
+        return
+      }
       this.$store.dispatch('a:equipmenBig/saveIboxMainType', this.resInfo).then(
         res => {
           this.$router.push('/equipmenBig/index')

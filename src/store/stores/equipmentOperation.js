@@ -31,10 +31,10 @@ const actions = {
     })
   },
   /* 获取列表 */
-  'a:equipmentOperation/getHistoryList' ({commit}, params) {
+  'a:equipmentOperation/getHistoryList' ({commit}, parameters = {}) {
     return ajax.api({
       cmd: 'ime-sys/machinesHistory/getHistoryList',
-      parameters: params
+      ...parameters
     })
   }
 }

@@ -31,10 +31,10 @@ const actions = {
     })
   },
   /* 列表 */
-  'a:systemMall/getTypeList' ({commit}, params) {
+  'a:systemMall/getTypeList' ({commit}, parameters = {}) {
     return ajax.api({
       cmd: 'ime-sys/typeManage/getTypeList',
-      parameters: params
+      ...parameters
     })
   }
 }

@@ -9,60 +9,68 @@
       <div class="filter-line">
         <label>操作日期</label>
         <div class="select-wrapper">
-          <!--<Row>
-            <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
-            </Select>
+          <Row>
+            <Col span="12">
+              <DatePicker type="daterange" placement="bottom-end" placeholder="开始-结束日期" style="width: 220px"></DatePicker>
             </Col>
-          </Row>-->
+          </Row>
         </div>
-        <label class="app-name-dev special-first">变更来源</label><input type="text" v-model="params.typeName">
-        <label class="app-name-dev special-first">设备序列号</label><input type="text" v-model="params.typeName">
+        <label>变更来源</label>
+        <div class="select-wrapper">
+           <Row>
+             <Col span="40" style="padding-right:10px">
+             <Select v-model="params.resource" filterable clearable>
+               <Option v-for="item in resourceList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+             </Select>
+             </Col>
+           </Row>
+        </div>
+        <label class="app-name-dev special-first">设备序列号</label><input type="text" v-model="params.mtNo" placeholder="单独输入设备序列号会有对比颜色">
       </div>
      <div class="filter-line">
         <label>所有权</label>
         <div class="select-wrapper">
-         <!-- <Row>
+          <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+            <Select v-model="params.propertyId" filterable clearable>
+              <Option v-for="item in uses" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
             </Select>
             </Col>
-          </Row>-->
-        </div> <label>使用权</label>
-        <div class="select-wrapper">
-          <!--<Row>
-            <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
-            </Select>
-            </Col>
-          </Row>-->
+          </Row>
         </div>
-       <label class="app-name-dev special-first">MAC</label><input type="text" v-model="params.typeName">
+       <label>使用权</label>
+        <div class="select-wrapper">
+          <Row>
+            <Col span="40" style="padding-right:10px">
+            <Select v-model="params.userId" filterable clearable>
+              <Option v-for="item in uses" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+            </Select>
+            </Col>
+          </Row>
+        </div>
+       <label class="app-name-dev special-first">MAC</label><input type="text" v-model="params.mac">
       </div>
       <div class="filter-line">
-        <label class="app-name-dev special-first">加密狗</label><input type="text" v-model="params.typeName">
+        <label class="app-name-dev special-first">加密狗</label><input type="text" v-model="params.uKey">
         <label>获取类型</label>
         <div class="select-wrapper">
-         <!-- <Row>
+          <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+            <Select v-model="params.useType" filterable clearable>
+              <Option v-for="item in useTypeList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
             </Col>
-          </Row>-->
+          </Row>
         </div>
         <label>是否上线</label>
         <div class="select-wrapper">
-         <!-- <Row>
+          <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+            <Select v-model="params.isOnLine" filterable clearable>
+              <Option v-for="item in onlineList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
             </Col>
-          </Row>-->
+          </Row>
         </div>
         <div class="func-btns-wrapper search-reset">
           <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
@@ -125,24 +133,87 @@ export default {
       tbody: [],
       thead: thead,
       params: {
-        brand: '',
-        typeName: ''
+        startTime: '', // 开始时间
+        endTime: '', // 结束时间
+        resource: '', // 变更来源
+        mtNo: '', // 设备序列号
+        propertyId: '', // 所有权ID
+        userId: '', // 使用权ID
+        mac: '', // mac
+        uKey: '', // 加密狗
+        useType: '', // 获取类型
+        isOnLine: '' // 是否在线
       },
-      brandList: [] // 品牌
+      brandList: [], // 品牌
+      resourceList: [], // 变更来源
+      useTypeList: [], // 获取类型
+      onlineList: [], // 是否在线
+      uses: [] // 使用权
     }
   },
   mounted () {
     this.getBrandList()
     this.getTableList(this.cmd, this.params)
+    this.getResourceList()
+    this.getUseTypeList()
+    this.getFacNameAndId()
+    this.getResourceList()
+    this.getOnlineList()
   },
   methods: {
+    // 是否在线
+    getOnlineList () {
+      this.$store.dispatch('a:equipmentOperation/getOnlineList', {}).then(
+        res => {
+          this.onlineList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取变更来源
+    getResourceList () {
+      this.$store.dispatch('a:equipmentOperation/getResourceList', {}).then(
+        res => {
+          this.resourceList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取类型
+    getUseTypeList () {
+      this.$store.dispatch('a:equipmentOperation/getUseTypeList', {}).then(
+        res => {
+          this.useTypeList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 所有权/使用权
+    getFacNameAndId () {
+      this.$store.dispatch('a:equipmentOperation/getFacNameAndId', {}).then(
+        res => {
+          this.uses = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     brandFun (code) {
       let brand = this.brandList.filter(item => {
         return item.code === code
       })
       return brand[0].name
     },
-    searchTab () {},
+    searchTab () {
+      this.getTableList(this.cmd, this.params)
+    },
     // 编辑/新建
     edit (type, id) {
       this.$router.push('/systemBig/detail')
@@ -160,12 +231,12 @@ export default {
       } else {
         this.pageInfoReq.page = this.pageNo
         this.pageInfo.page = +this.pageNo
-        this.getTableList(this.cmd, this.params, this.pageInfoReq)
+        this.getTableList(this.cmd, this.params)
       }
     },
     changepage (index) {
-      this.pageInfoReq.page = index
-      this.getTableList(this.cmd, this.params, this.pageInfoReq)
+      this.pageInfoReq.page = index - 1
+      this.getTableList(this.cmd, this.params)
       this.pageNo = index
     },
     // 获取品牌

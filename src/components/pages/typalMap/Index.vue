@@ -10,7 +10,7 @@
       <section class="filter-wrapper" @keyup.enter="searchTab">
         <div class="filter-line">
           <label class="app-name-dev special-first">名称</label>
-          <input type="text" v-model="params.symgMSerialNo">
+          <input type="text" v-model="params.typeName">
           <div class="func-btns-wrapper search-reset">
             <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
           </div>
@@ -32,18 +32,18 @@
               <td><div>{{props.item.typeName}}</div></td>
               <td class="operations-td wid-100px">
                 <div class="operations flex-center">
-                  <div class="btn btn-detail" @click.stop="edit('edit', props.item.equId)">编辑</div>
-                  <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.equId, props.item.serNo, props.item.equserialno)">删除</div>
+                  <div class="btn btn-detail" @click.stop="edit('edit', props.item.id)">编辑</div>
+                  <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.id)">删除</div>
                 </div>
               </td>
             </template>
           </custom-table>
           <div style="margin: 20px auto" class="pageStyle">
-            <div class="left">
+            <!--<div class="left">
               <span>跳转至</span>
               <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
               <span>页</span>
-            </div>
+            </div>-->
             <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
             <div class="total-pages">
               <span>共</span>
@@ -72,18 +72,7 @@ export default {
       pageNo: '',
       cmd: 'a:typalMap/getMapTypeList',
       params: {
-        brand: '',
-        haveType: '',
-        iportType: '',
-        isOnline: '',
-        mac: '',
-        mainTypeCode: '',
-        orgNameId: '',
-        symgMSerialNo: '',
-        symgMachineTypeId: '',
-        uKey: '',
-        userNameId: '',
-        vpnType: ''
+        typeName: ''
       },
       brandList: [], // 品牌
       mainTypeListNoPage: [], // 大类
@@ -113,12 +102,6 @@ export default {
   mounted () {
     this.get()
     this.getTableList(this.cmd, this.params)
-    // this.getMachineList()
-  /*  this.getBrandList()
-    this.getMainTypeListNoPage()
-    this.getMachineTypeByMainCode()
-    this.getMachineObtainType()
-    this.getFacNameAndId() */
   },
   methods: {
     searchTab () {
@@ -134,19 +117,23 @@ export default {
       } else {
         this.pageInfoReq.page = this.pageNo
         this.pageInfo.page = +this.pageNo
-        this.getTableList(this.cmd, this.params)
+        this.getTableList(this.cmd, this.params, this.pageInfoReq)
       }
     },
     changepage (index) {
-      this.pageInfoReq.page = index
-      this.getTableList(this.cmd, this.params)
+      this.pageInfoReq.page = index - 1
+      this.getTableList(this.cmd, this.params, this.pageInfoReq)
       this.pageNo = index
     },
     // 编辑/新建
     edit (type, id) {
-      this.$router.push('/device/detail')
-      sessionStorage.setItem('editId', id)
+      this.$router.push('/typalMap/detail')
       sessionStorage.setItem('editType', type)
+      if (type === 'edit') {
+        sessionStorage.setItem('editId', JSON.stringify(id))
+      } else {
+        sessionStorage.setItem('editId', JSON.stringify(''))
+      }
     },
     obtainType (code) {
       let obtainArr = this.machineObtainType.filter(item => {
@@ -155,22 +142,26 @@ export default {
       return obtainArr[0].name
     },
     // 删除
-    deleteMachineById (equId, serNo, equserialno) {
-      this.deleteParams.equId = equId
-      this.deleteParams.serNo = serNo
+    deleteMachineById (id) {
+      this.deleteParams.id = id
       this.$Modal.confirm({
         title: '提示',
-        content: `确认删除【序列号：${equserialno}】的设备么?`,
+        content: `确认删除【序列号：${id}】的设备吗?`,
         onOk: () => {
+          this.$store.dispatch('a:typalMap/deleteMapType', this.deleteParams).then(
+            res => {
+              if (res.success) {
+                this.getTableList(this.cmd, this.params)
+              } else {
+                this.alert(res.msg, 'error')
+              }
+            },
+            rej => {
+              this.alert(rej.errorInfo, 'error')
+            }
+          )
         }
       })
-      /* this.$store.dispatch('a:device/deleteMachineById', this.deleteParams).then(
-       res => {
-       },
-       rej => {
-       this.alert(rej.errorInfo, 'error')
-       }
-       ) */
     },
     // 获取
     get () {
