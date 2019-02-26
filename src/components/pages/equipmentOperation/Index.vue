@@ -11,7 +11,7 @@
         <div class="select-wrapper">
           <Row>
             <Col span="12">
-              <DatePicker type="daterange" placement="bottom-end" placeholder="开始-结束日期" style="width: 220px"></DatePicker>
+              <DatePicker type="daterange" placement="bottom-end" placeholder="开始日期 —— 结束日期" style="width: 220px"></DatePicker>
             </Col>
           </Row>
         </div>
@@ -161,6 +161,13 @@ export default {
     this.getOnlineList()
   },
   methods: {
+    // 查询
+    searchTab () {
+      this.pageInfoReq.page = 0
+      this.getTableList(this.cmd, this.params)
+      this.pageNo = '1'
+      console.log(this.pageNo, 'pageNo')
+    },
     // 是否在线
     getOnlineList () {
       this.$store.dispatch('a:equipmentOperation/getOnlineList', {}).then(
@@ -210,9 +217,6 @@ export default {
         return item.code === code
       })
       return brand[0].name
-    },
-    searchTab () {
-      this.getTableList(this.cmd, this.params)
     },
     // 编辑/新建
     edit (type, id) {

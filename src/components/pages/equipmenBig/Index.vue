@@ -120,7 +120,9 @@ export default {
         sessionStorage.setItem('editId', JSON.stringify(''))
       }
     },
+    // 查询
     searchTab () {
+      this.pageInfoReq.page = 0
       this.getTableList(this.cmd, this.params)
     },
     // 获取品牌

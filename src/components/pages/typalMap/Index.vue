@@ -104,7 +104,9 @@ export default {
     this.getTableList(this.cmd, this.params)
   },
   methods: {
+    // 查询
     searchTab () {
+      this.pageInfoReq.page = 0
       this.getTableList(this.cmd, this.params)
     },
     jumpTo () {

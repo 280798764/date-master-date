@@ -13,14 +13,11 @@
           <div class="select-wrapper">
             <Row>
               <Col span="40" style="padding-right:10px">
-              <Select v-model="params.brand" filterable>
+              <Select v-model="params.brand" filterable clearable>
                 <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
               </Select>
               </Col>
             </Row>
-           <!-- <Select clearable v-model="params.brand">
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{item.name}}</Option>
-            </Select>-->
           </div>
           <label>大类</label>
           <div class="select-wrapper">
@@ -214,8 +211,10 @@ export default {
     this.getFacNameAndId()
   },
   methods: {
+    // 查询
     searchTab () {
-      this.getTableList(this.cmd, this.params, this.pageInfoReq)
+      this.pageInfoReq.page = 0
+      this.getTableList(this.cmd, this.params)
     },
     jumpTo () {
       this.pageChange()
@@ -231,7 +230,7 @@ export default {
       }
     },
     changepage (index) {
-      this.pageInfoReq.page = index
+      this.pageInfoReq.page = index - 1
       this.getTableList(this.cmd, this.params, this.pageInfoReq)
       this.pageNo = index
     },

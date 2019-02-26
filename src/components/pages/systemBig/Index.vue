@@ -120,6 +120,7 @@ export default {
       }
     },
     searchTab () {
+      this.pageInfoReq.page = 0
       this.getTableList(this.cmd, this.params)
     },
     // 编辑/新建

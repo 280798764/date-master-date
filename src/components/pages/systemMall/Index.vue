@@ -118,7 +118,11 @@ export default {
       })
       return brand[0].name
     },
-    searchTab () {},
+    // 查询
+    searchTab () {
+      this.pageInfoReq.page = 0
+      this.getTableList(this.cmd, this.params)
+    },
     // 编辑/新建
     edit (type, id) {
       this.$router.push('/systemBig/detail')
