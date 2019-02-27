@@ -13,14 +13,14 @@
           <span class="require">*</span>
           <input type="text" v-if="detailInfo.equserialno" v-model.trim="detailInfo.equserialno" readonly>
           <input type="text" v-else v-model.trim="detailInfo.equserialno">
-          <label>设备大类</label>
+          <label>系统大类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.mainTypeCode">
               <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
-          <label>设备类别</label>
+          <label>系统小类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.typeId">
@@ -32,14 +32,29 @@
           <label>设备名称</label>
           <span class="require">*</span>
           <input type="text" v-model.trim="detailInfo.machineName">
+          <label>设备大类</label>
+          <span class="require">*</span>
+          <div class="select-wrapper">
+            <Select clearable v-model="detailInfo.mainTypeCode">
+              <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
+            </Select>
+          </div>
+          <label>设备小类</label>
+          <span class="require">*</span>
+          <div class="select-wrapper">
+            <Select clearable v-model="detailInfo.typeId">
+              <Option v-for="item in machineTypeByMainCode" :value="item.symgMachineTypeId" :key="item.symgMachineTypeId">{{item.symgMtName}}</Option>
+            </Select>
+          </div>
+
+        </div>
+        <div class="filter-line">
           <label class="app-name-dev special-first">MAC</label>
           <span class="require">*</span>
           <input type="text" v-model.trim="detailInfo.mac">
           <label class="app-name-dev special-first">UKEY</label>
           <span class="require">*</span>
           <input type="text"  v-model.trim="detailInfo.uKey">
-        </div>
-        <div class="filter-line">
           <label>所有权</label>
           <span class="require">*</span>
           <div class="select-wrapper">
@@ -47,6 +62,8 @@
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
+        </div>
+        <div class="filter-line">
           <label>使用权</label>
           <span class="require">*</span>
           <div class="select-wrapper">
@@ -54,9 +71,8 @@
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
-          <label class="app-name-dev special-first">AGENT KEY</label><span class="require">*</span><input type="text" v-model.trim="detailInfo.agentKey">
-        </div>
-        <div class="filter-line">
+          <label class="app-name-dev special-first">AGENT KEY</label><span class="require">*</span>
+          <input type="text" v-model.trim="detailInfo.agentKey">
           <label>获取途径</label>
           <span class="require">*</span>
           <div class="select-wrapper">
@@ -64,37 +80,47 @@
               <Option v-for="item in machineObtainType" :value="item.code" :key="item.code">{{item.name}}</Option>
             </Select>
           </div>
+        </div>
+        <div class="filter-line">
+
           <label>设备制造商</label>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.madeFactoryId">
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
-          <label class="app-name-dev special-first">规格</label><input type="text"  v-model.trim="detailInfo.specification">
-
-        </div>
-        <div class="filter-line">
+          <label class="app-name-dev special-first">规格</label>
+          <input type="text"  v-model.trim="detailInfo.specification">
           <label>iport类型</label>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.iportType">
               <Option v-for="item in iportNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
+
+        </div>
+        <div class="filter-line">
           <label>vpn更新</label>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.vpnType">
               <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
-          <!--<label class="app-name-dev special-first">设置图片</label><input type="text"  v-model.trim="detailInfo.specification">-->
-        </div>
-        <div class="filter-line">
+          <label>设置图片</label>
+          <div class="select-wrapper">
+            <Select clearable v-model="detailInfo.vpnType">
+              <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
+            </Select>
+          </div>
           <label>是否上线</label>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.isOnline">
               <Option v-for="item in isOnlineNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
+          <!--<label class="app-name-dev special-first">设置图片</label><input type="text"  v-model.trim="detailInfo.specification">-->
+        </div>
+        <div class="filter-line">
         </div>
         <div class="filter-line">
           <label class="app-name-dev special-first">初始化报文</label><input class="checkbox" type="checkbox" checked>

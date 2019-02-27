@@ -19,13 +19,13 @@
               </Col>
             </Row>
           </div>
-          <label>大类</label>
+          <label>系统大类</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.mainTypeCode">
               <Option v-for="item in mainTypeListNoPage" :value="item.id" :key="item.id">{{item.mainTypeName}}</Option>
             </Select>
           </div>
-          <label>设备类型</label>
+          <label>系统小类</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.symgMachineTypeId">
               <Option v-for="item in machineTypeByMainCode" :value="item.symgMachineTypeId" :key="item.symgMachineTypeId">{{item.symgMtName}}</Option>
@@ -33,7 +33,23 @@
           </div>
         </div>
         <div class="filter-line">
-          <label class="app-name-dev special-first">设备序列号</label><input type="text" v-model="params.symgMSerialNo">
+          <label class="app-name-dev special-first">设备序列号</label>
+          <input type="text" v-model="params.symgMSerialNo">
+          <label>设备大类</label>
+          <div class="select-wrapper">
+            <Select clearable v-model="params.mainTypeCode">
+              <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
+            </Select>
+          </div>
+          <label>设备小类</label>
+          <div class="select-wrapper">
+            <Select clearable v-model="params.symgMachineTypeId">
+              <Option v-for="item in iboxTypeList" :value="item.typeId" :key="item.typeId">{{item.typeName}}</Option>
+            </Select>
+          </div>
+        </div>
+        <div class="filter-line">
+
           <label>设备制造商</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.madeFactoryId">
@@ -46,24 +62,24 @@
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
-        </div>
-        <div class="filter-line">
           <label>使用权</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.userNameId">
               <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
             </Select>
           </div>
-          <label class="app-name-dev special-first">MAC</label><input type="text" v-model="params.mac">
-          <label class="app-name-dev special-first">UKEY</label><input type="text" v-model="params.uKey">
         </div>
         <div class="filter-line">
+          <label class="app-name-dev special-first">MAC</label><input type="text" v-model="params.mac">
+          <label class="app-name-dev special-first">UKEY</label><input type="text" v-model="params.uKey">
           <label>获取途径</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.haveType">
               <Option v-for="item in machineObtainType" :value="item.code" :key="item.code">{{item.name}}</Option>
             </Select>
           </div>
+        </div>
+        <div class="filter-line">
           <label>iport类型</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.iportType">
@@ -76,8 +92,6 @@
               <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
-        </div>
-        <div class="filter-line">
           <label>是否上线</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.isOnline">
@@ -176,8 +190,10 @@ export default {
         vpnType: ''
       },
       brandList: [], // 品牌
-      mainTypeListNoPage: [], // 大类
-      machineTypeByMainCode: [], // 设备类型
+      mainTypeListNoPage: [], // 系统大类
+      machineTypeByMainCode: [], // 系统小类
+      iboxMainTypeList: [], // 设备小类
+      iboxTypeList: [], // 设备小类
       machineObtainType: [], // 获取途径
       factory: [], // 设备制造商/使用权/所有权
       thead: thead,
@@ -208,6 +224,8 @@ export default {
     this.getMainTypeListNoPage()
     this.getMachineTypeByMainCode()
     this.getMachineObtainType()
+    this.getIboxMainTypeList()
+    this.getIboxTypeList()
     this.getFacNameAndId()
   },
   methods: {
@@ -285,7 +303,30 @@ export default {
         }
       )
     },
-    // 获取大类
+    // 设备大类
+    getIboxMainTypeList () {
+      this.$store.dispatch('a:device/getIboxMainTypeList', {}).then(
+        res => {
+          this.iboxMainTypeList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 设备小类
+    getIboxTypeList () {
+      this.$store.dispatch('a:device/getIboxTypeList', {}).then(
+        res => {
+          this.iboxTypeList = res || []
+          console.log(res, '设备小类')
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取系统大类
     getMainTypeListNoPage () {
       this.$store.dispatch('a:device/getMainTypeListNoPage', {}).then(
         res => {
@@ -296,7 +337,7 @@ export default {
         }
       )
     },
-    // 获取设备类型
+    // 获取系统小类
     getMachineTypeByMainCode () {
       this.$store.dispatch('a:device/getMachineTypeByMainCode', {}).then(
         res => {

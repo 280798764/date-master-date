@@ -78,6 +78,20 @@ const actions = {
       cmd: 'ime-sys/machineManage/deleteMachineById',
       parameters: params
     })
+  },
+  /* 设备大类 */
+  'a:device/getIboxMainTypeList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/iboxMainTypeManage/getIboxMainTypeListNoPage',
+      parameters: params
+    })
+  },
+  /* 设备小类 */
+  'a:device/getIboxTypeList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/iboxTypeManage/getIboxTypeListNoPage',
+      parameters: params
+    })
   }
 }
 
