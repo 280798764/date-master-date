@@ -71,7 +71,7 @@ export default {
   mixins: [mixinsTable],
   data () {
     return {
-      cmd: 'a:device/getMainTypeList',
+      cmd: 'a:systemBig/getMainTypeList',
       pageInfo: '',
       pageNo: '',
       tbody: [],

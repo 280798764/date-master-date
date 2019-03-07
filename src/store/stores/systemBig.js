@@ -2,15 +2,15 @@
 import ajax from '@/utils/ajax'
 
 const actions = {
-  // /* 获取品牌 */
-  // 'a:device/getMachineTypeByMainCode' ({commit}, params) {
-  //   return ajax.api({
-  //     cmd: 'ime-sys/machineManage/getMachineTypeByMainCode',
-  //     parameters: params
-  //   })
-  // },
+  /* 获取品牌 */
+  'a:systemBig/getBrandList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/brandManage/getBrandList',
+      parameters: params
+    })
+  },
   /* 获取列表 */
-  'a:device/getMainTypeList' ({commit}, parameters = {}) {
+  'a:systemBig/getMainTypeList' ({commit}, parameters = {}) {
     return ajax.api({
       cmd: 'ime-sys/mainTypeManage/getMainTypeList',
       ...parameters

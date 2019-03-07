@@ -182,7 +182,7 @@ export default {
         this.$store.dispatch('a:login/login', this.loginParams).then(
           res => {
             sessionStorage.setItem('userToken', res.token)
-            // sessionStorage.setItem('name', res.memberName)
+            sessionStorage.setItem('name', res.memberName)
             this.getMenu(res.token)
           },
           rej => {

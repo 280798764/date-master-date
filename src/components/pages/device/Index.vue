@@ -192,7 +192,7 @@ export default {
       brandList: [], // 品牌
       mainTypeListNoPage: [], // 系统大类
       machineTypeByMainCode: [], // 系统小类
-      iboxMainTypeList: [], // 设备小类
+      iboxMainTypeList: [], // 设备大类
       iboxTypeList: [], // 设备小类
       machineObtainType: [], // 获取途径
       factory: [], // 设备制造商/使用权/所有权
@@ -319,7 +319,6 @@ export default {
       this.$store.dispatch('a:device/getIboxTypeList', {}).then(
         res => {
           this.iboxTypeList = res || []
-          console.log(res, '设备小类')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

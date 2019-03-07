@@ -9,10 +9,24 @@ const actions = {
       parameters: params
     })
   },
-  /* 设备大类名称 */
+  /* 系统大类 */
+  'a:equipmenMall/getMachineType' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/getMachineType',
+      parameters: params
+    })
+  },
+  /* 设备大类- 无分页 */
   'a:equipmenMall/getIboxMainTypeListNoPage' ({commit}, params) {
     return ajax.api({
       cmd: 'ime-sys/iboxMainTypeManage/getIboxMainTypeListNoPage',
+      parameters: params
+    })
+  },
+  /* 地图类别 */
+  'a:equipmenMall/getMapList' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/bigmapTypeManage/getMapList',
       parameters: params
     })
   },
@@ -24,9 +38,9 @@ const actions = {
     })
   },
   /* 详情 */
-  'a:equipmenMall/getIboxTypeById' ({commit}, params) {
+  'a:equipmenMall/getTypeById' ({commit}, params) {
     return ajax.api({
-      cmd: 'ime-sys/iboxTypeManage/getIboxTypeById',
+      cmd: 'ime-sys/typeManage/getTypeById',
       parameters: params
     })
   },

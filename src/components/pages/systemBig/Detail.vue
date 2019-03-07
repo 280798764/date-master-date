@@ -8,7 +8,8 @@
     <section class="filter-wrapper">
       <div class="filter-line">
         <label>CODE <span class="require">*</span></label>
-        <input type="text" v-model.trim="params2.code">
+        <input v-if="inTotype === 'edit'" type="text" v-model.trim="params2.code" readonly>
+        <input v-else type="text" v-model.trim="params2.code">
         <label>名称  <span class="require">*</span></label>
         <input type="text" v-model.trim="params2.name">
       </div>
@@ -32,14 +33,15 @@
       </div>
       <div class="filter-line">
         <label>图片标题</label>
-        <input type="text" v-model.trim="params2.picTitle1">
+        <input type="text" v-model.trim="picList.picTitle">
         <label>图片URL</label>
-        <input type="text" v-model.trim="params2.picPath1">
+        <input type="text" v-model.trim="picList.picPath">
+        <button class="uploadFile">上传</button>
       </div>
       <div class="filter-line reset-height">
         <label>图片预览</label>
         <div class="imgBox">
-          <img :src="params2.picPath1">
+          <img :src="picList.picPath">
         </div>
       </div>
       <!-- 底部功能按钮 -->
@@ -68,14 +70,12 @@ export default {
         description: '',
         name: '',
         picId1: '',
-        picId2: '',
-        picId3: '',
         picpath1: '',
-        picpath2: '',
-        picpath3: '',
-        pictitle1: '',
-        pictitle2: '',
-        pictitle3: ''
+        pictitle1: ''
+      },
+      picList: {
+        picPath: '',
+        picTitle: ''
       }
     }
   },
@@ -88,6 +88,20 @@ export default {
     }
   },
   methods: {
+    // 校验空字段
+    empty () {
+      if (!this.params2.code) {
+        this.alert('CODE不能为空！', 'error')
+        return false
+      } else if (!this.params2.name) {
+        this.alert('名称不能为空！', 'error')
+        return false
+      } else if (!this.params2.description) {
+        this.alert('描述不能为空！', 'error')
+        return false
+      }
+      return true
+    },
     detail () {
       this.$store.dispatch('a:systemBig/getMainTypeById', this.params).then(
         res => {
@@ -95,9 +109,8 @@ export default {
           this.params2.description = res.mainType.description || ''
           this.params2.name = res.mainType.genreName || ''
           this.params2.code = res.mainType.mainTypeCode || ''
-          this.params2.picpath1 = res.mainType.picList || ''
-          this.params2.pictitle1 = res.mainType.picList || ''
           this.params2.mainTypeId = res.mainType.id || ''
+          this.picList = res.picList[0] || {}
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
@@ -105,6 +118,11 @@ export default {
       )
     },
     edit () {
+      if (!this.empty()) {
+        return
+      }
+      this.params2.picpath1 = this.picList.picPath || ''
+      this.params2.pictitle1 = this.picList.picTitle || ''
       this.$store.dispatch('a:systemBig/updataMainType', this.params2).then(
         res => {
           this.$router.push('/systemBig/index')
@@ -115,6 +133,9 @@ export default {
       )
     },
     save () {
+      if (!this.empty()) {
+        return
+      }
       this.$store.dispatch('a:systemBig/saveMainType', this.params2).then(
         res => {
           this.$router.push('/systemBig/index')
@@ -129,7 +150,7 @@ export default {
     },
     // 获取品牌
     getBrandList () {
-      this.$store.dispatch('a:device/getBrandList', {}).then(
+      this.$store.dispatch('a:systemBig/getBrandList', {}).then(
         res => {
           this.brandList = res || []
         },
@@ -153,5 +174,15 @@ export default {
   }
   .reset-height {
     height: inherit;
+  }
+  .uploadFile {
+    width: 60px;
+    border-radius: 5px;
+    height: 26px;
+    line-height: 26px;
+    background-color: #fabf40;
+    border: none;
+    color: #fff;
+    margin-left: 30px;
   }
 </style>

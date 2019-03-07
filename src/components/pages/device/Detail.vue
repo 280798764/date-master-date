@@ -36,14 +36,14 @@
           <span class="require">*</span>
           <div class="select-wrapper">
             <Select clearable v-model="detailInfo.mainTypeCode">
-              <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
+              <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>设备小类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.typeId">
-              <Option v-for="item in machineTypeByMainCode" :value="item.symgMachineTypeId" :key="item.symgMachineTypeId">{{item.symgMtName}}</Option>
+            <Select clearable v-model="detailInfo.machineName">
+              <Option v-for="item in iboxTypeList" :value="item.typeId" :key="item.typeId">{{item.typeName}}</Option>
             </Select>
           </div>
 
@@ -121,6 +121,22 @@
           <!--<label class="app-name-dev special-first">设置图片</label><input type="text"  v-model.trim="detailInfo.specification">-->
         </div>
         <div class="filter-line">
+          <label style="margin-left: 20px">使用权变更时间</label>
+          <div class="select-wrapper">
+            <Row>
+              <Col span="12">
+                <DatePicker type="date" placeholder="使用权变更时间" style="width: 200px"></DatePicker>
+              </Col>
+            </Row>
+          </div>
+          <label>所有权变更时间</label>
+          <div class="select-wrapper">
+            <Row>
+              <Col span="12">
+                <DatePicker type="date" placeholder="所有权变更时间" style="width: 200px"></DatePicker>
+              </Col>
+            </Row>
+          </div>
         </div>
         <div class="filter-line">
           <label class="app-name-dev special-first">初始化报文</label><input class="checkbox" type="checkbox" checked>
@@ -147,6 +163,8 @@ export default {
         eduId: ''
       },
       brandList: [], // 品牌
+      iboxMainTypeList: [], // 设备大类
+      iboxTypeList: [], // 设备小类
       mainTypeListNoPage: [], // 大类
       machineTypeByMainCode: [], // 设备类型
       machineObtainType: [], // 获取途径
@@ -169,11 +187,13 @@ export default {
     }
   },
   mounted () {
+    this.getIboxTypeList()
     this.getBrandList()
     this.getMainTypeListNoPage()
     this.getMachineTypeByMainCode()
     this.getMachineObtainType()
     this.getFacNameAndId()
+    this.getIboxMainTypeList()
     this.params.eduId = sessionStorage.getItem('editId')
     this.inTotype = sessionStorage.getItem('editType')
     if (this.inTotype === 'edit') {
@@ -181,6 +201,28 @@ export default {
     }
   },
   methods: {
+    // 设备小类
+    getIboxTypeList () {
+      this.$store.dispatch('a:device/getIboxTypeList', {}).then(
+        res => {
+          this.iboxTypeList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 设备大类
+    getIboxMainTypeList () {
+      this.$store.dispatch('a:device/getIboxMainTypeList', {}).then(
+        res => {
+          this.iboxMainTypeList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     searchTab () {
 
     },

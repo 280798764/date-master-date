@@ -9,36 +9,36 @@
       <div class="filter-line">
         <label>品牌</label>
         <div class="select-wrapper">
-          <!--<Row>
+          <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
+            <Select v-model="params.brand" filterable clearable>
               <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
             </Select>
             </Col>
-          </Row>-->
+          </Row>
         </div>
         <label>大类</label>
         <div class="select-wrapper">
-          <!--<Row>
+          <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="params.brand" filterable>
-              <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+            <Select v-model="params.mtClass" filterable clearable>
+              <Option v-for="item in machineTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{ item.mainTypeName }}</Option>
             </Select>
             </Col>
-          </Row>-->
+          </Row>
         </div>
-        <label class="app-name-dev special-first">类别名称</label><input type="text" v-model="params.typeName">
+        <label class="app-name-dev special-first">类别名称</label><input type="text" v-model="params.mtName">
       </div>
       <div class="filter-line">
-        <label>所有权</label>
+        <label>地图类别名称</label>
         <div class="select-wrapper">
-          <!-- <Row>
+           <Row>
              <Col span="40" style="padding-right:10px">
-             <Select v-model="params.brand" filterable>
-               <Option v-for="item in brandList" :value="item.code" :key="item.code">{{ item.name }}</Option>
+             <Select v-model="params.bigmapTypeId" filterable clearable>
+               <Option v-for="item in mapList" :value="item.id" :key="item.id">{{ item.typeName }}</Option>
              </Select>
              </Col>
-           </Row>-->
+           </Row>
         </div>
         <div class="func-btns-wrapper search-reset">
           <div class="func-btn btn-search" @click="searchTab"><i class="iconfont icon-icon-btn-search"></i>查询</div>
@@ -64,8 +64,8 @@
             <td><div>{{props.item.description}}</div></td>
             <td class="operations-td wid-100px">
               <div class="operations flex-center">
-                <div class="btn btn-detail" @click.stop="edit('edit', props.item.equId)">编辑</div>
-                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.equId, props.item.serNo, props.item.equserialno)">删除</div>
+                <div class="btn btn-detail" @click.stop="edit('edit', props.item.typeId)">编辑</div>
+                <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.typeId)">删除</div>
               </div>
             </td>
           </template>
@@ -90,7 +90,7 @@
 
 <script>
 import mixinsTable from '@/utils/mixinsTable'
-const thead = ['小类CODE', '名称', '大类', '地图类别名称', '参数集', '服务', '展示界面', '简述', '描述', '操作']
+const thead = ['小类CODE', '类别名称', '大类', '地图类别名称', '参数集', '服务', '展示界面', '简述', '描述', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
@@ -101,14 +101,20 @@ export default {
       tbody: [],
       thead: thead,
       params: {
-        brand: '',
-        typeName: ''
+        brand: '', // 品牌
+        mtClass: '', // 大类
+        mtName: '', // 类别名称
+        bigmapTypeId: '' // 地图类别
       },
-      brandList: [] // 品牌
+      brandList: [], // 品牌
+      machineTypeList: [], // 大类
+      mapList: [] // 地图类别
     }
   },
   mounted () {
     this.getBrandList()
+    this.getMachineType()
+    this.getMapList()
     this.getTableList(this.cmd, this.params)
   },
   methods: {
@@ -125,7 +131,7 @@ export default {
     },
     // 编辑/新建
     edit (type, id) {
-      this.$router.push('/systemBig/detail')
+      this.$router.push('/systemMall/detail')
       sessionStorage.setItem('editId', JSON.stringify(id))
       sessionStorage.setItem('editType', type)
     },
@@ -150,9 +156,31 @@ export default {
     },
     // 获取品牌
     getBrandList () {
-      this.$store.dispatch('a:device/getBrandList', {}).then(
+      this.$store.dispatch('a:equipmenMall/getBrandList', {}).then(
         res => {
           this.brandList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取大类
+    getMachineType () {
+      this.$store.dispatch('a:equipmenMall/getMachineType', {}).then(
+        res => {
+          this.machineTypeList = res || []
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 获取地图类别
+    getMapList () {
+      this.$store.dispatch('a:equipmenMall/getMapList', {}).then(
+        res => {
+          this.mapList = res || []
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

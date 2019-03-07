@@ -23,6 +23,13 @@ const actions = {
       parameters: params
     })
   },
+  /* 参数 */
+  'a:systemMall/paramVersion' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-config/paramVersion/getAll',
+      parameters: params
+    })
+  },
   /* --- */
   'a:systemMall/getAll' ({commit}, params) {
     return ajax.api({
