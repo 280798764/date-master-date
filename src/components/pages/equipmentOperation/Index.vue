@@ -11,7 +11,12 @@
         <div class="select-wrapper">
           <Row>
             <Col span="12">
-              <DatePicker type="daterange" placement="bottom-end" placeholder="开始日期 —— 结束日期" style="width: 220px"></DatePicker>
+              <DatePicker
+                type="daterange"
+                placement="bottom-end"
+                placeholder="开始日期 —— 结束日期"
+                style="width: 220px"
+              @on-change="getTime($event)"></DatePicker>
             </Col>
           </Row>
         </div>
@@ -103,11 +108,6 @@
           </template>
         </custom-table>
         <div style="margin: 20px auto" class="pageStyle">
-          <div class="left">
-            <span>跳转至</span>
-            <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
-            <span>页</span>
-          </div>
           <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
           <div class="total-pages">
             <span>共</span>
@@ -161,6 +161,10 @@ export default {
     this.getOnlineList()
   },
   methods: {
+    getTime (event) {
+      this.params.startTime = event[0]
+      this.params.endTime = event[1]
+    },
     // 查询
     searchTab () {
       this.pageInfoReq.page = 0

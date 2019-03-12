@@ -4,7 +4,8 @@
     <div class="wrap">
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
-        <span>设备编辑</span>
+        <span v-if="inTotype === 'create'">设备新增</span>
+        <span v-if="inTotype === 'edit'">设备编辑</span>
       </div>
       <!--过滤条件-->
       <section class="filter-wrapper" @keyup.enter="searchTab">
@@ -35,14 +36,14 @@
           <label>设备大类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.mainTypeCode">
+            <Select clearable v-model="detailInfo.iboxMainTypeCode">
               <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>设备小类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.machineName">
+            <Select clearable v-model="detailInfo.iboxTypeId">
               <Option v-for="item in iboxTypeList" :value="item.typeId" :key="item.typeId">{{item.typeName}}</Option>
             </Select>
           </div>
@@ -58,18 +59,26 @@
           <label>所有权</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.propertyId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="detailInfo.propertyId" filterable clearable @on-change="changeProperty">
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
         </div>
         <div class="filter-line">
           <label>使用权</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.propertyId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="detailInfo.userId" filterable clearable @on-change="changeUserId">
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
           <label class="app-name-dev special-first">AGENT KEY</label><span class="require">*</span>
           <input type="text" v-model.trim="detailInfo.agentKey">
@@ -85,9 +94,13 @@
 
           <label>设备制造商</label>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.madeFactoryId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="detailInfo.madeFactoryId" filterable clearable @on-change="setMadeFactory">
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
           <label class="app-name-dev special-first">规格</label>
           <input type="text"  v-model.trim="detailInfo.specification">
@@ -108,7 +121,7 @@
           </div>
           <label>设置图片</label>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.vpnType">
+            <Select clearable v-model="detailInfo.imageUrl">
               <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
@@ -120,20 +133,30 @@
           </div>
           <!--<label class="app-name-dev special-first">设置图片</label><input type="text"  v-model.trim="detailInfo.specification">-->
         </div>
-        <div class="filter-line">
-          <label style="margin-left: 20px">使用权变更时间</label>
-          <div class="select-wrapper">
+        <div class="filter-line" v-if="detailInfo.proChangeTime || detailInfo.changeTime || showPropertyTime || showUserTime">
+          <label style="margin-left: 20px" v-if="detailInfo.changeTime || showUserTime">使用权变更时间</label>
+          <div class="select-wrapper" v-if="detailInfo.changeTime || showUserTime">
             <Row>
               <Col span="12">
-                <DatePicker type="date" placeholder="使用权变更时间" style="width: 200px"></DatePicker>
+                <DatePicker
+                  type="date"
+                  placeholder="使用权变更时间"
+                  :value="detailInfo.changeTime"
+                  @on-change="changeTime($event)"
+                  style="width: 200px"></DatePicker>
               </Col>
             </Row>
           </div>
-          <label>所有权变更时间</label>
-          <div class="select-wrapper">
+          <label v-if="detailInfo.proChangeTime || showPropertyTime" style=" margin-left: 20px">所有权变更时间</label>
+          <div class="select-wrapper" v-if="detailInfo.proChangeTime || showPropertyTime">
             <Row>
               <Col span="12">
-                <DatePicker type="date" placeholder="所有权变更时间" style="width: 200px"></DatePicker>
+                <DatePicker
+                  type="date"
+                  placeholder="所有权变更时间"
+                  :value="detailInfo.proChangeTime"
+                  @on-change="changeTime2($event)"
+                  style="width: 200px"></DatePicker>
               </Col>
             </Row>
           </div>
@@ -158,6 +181,10 @@
 export default {
   data () {
     return {
+      propertyId: '', // 所有权id
+      userId: '', // 使用权id
+      showUserTime: '', // 使用权变更时间是否显示
+      showPropertyTime: '', // 所有权变更时间是否显示
       inTotype: '',
       params: {
         eduId: ''
@@ -182,7 +209,29 @@ export default {
         {id: '0', name: '否'}
       ],
       detailInfo: { // 详情对象
-
+        agentKey: '',
+        changeTime: '',
+        eduId: '',
+        haveType: '',
+        iboxTypeId: '',
+        iportType: '',
+        isOnline: '',
+        mac: '',
+        madeFactoryId: '',
+        madeFactoryName: '',
+        mainTypeCode: '',
+        orgName: '',
+        orgNameId: '',
+        path: '',
+        proChangeTime: '',
+        specification: '',
+        symgMSerialName: '',
+        symgMSerialNo: '',
+        symgMachineTypeId: '',
+        uKey: '',
+        userName: '',
+        userNameId: '',
+        vpnType: ''
       }
     }
   },
@@ -201,6 +250,37 @@ export default {
     }
   },
   methods: {
+    // 使用权变更时间
+    changeTime (event) {
+      this.detailInfo.changeTime = event
+    },
+    // 所有权变更时间
+    changeTime2 (event) {
+      this.detailInfo.proChangeTime = event
+    },
+    // 设备制造商
+    setMadeFactory () {
+      let arr = this.factory.filter(item => {
+        return item.facId === this.detailInfo.madeFactoryId
+      })
+      this.detailInfo.madeFactoryName = arr[0].facName
+    },
+    // 改变使用权
+    changeUserId () {
+      if (this.detailInfo.userId !== this.userId) {
+        this.showUserTime = true
+      } else {
+        this.showUserTime = false
+      }
+    },
+    // 改变所有权
+    changeProperty () {
+      if (this.detailInfo.propertyId !== this.propertyId) {
+        this.showPropertyTime = true
+      } else {
+        this.showPropertyTime = false
+      }
+    },
     // 设备小类
     getIboxTypeList () {
       this.$store.dispatch('a:device/getIboxTypeList', {}).then(
@@ -226,6 +306,7 @@ export default {
     searchTab () {
 
     },
+    // 编辑
     edit () {
       this.$store.dispatch('a:device/updateMachineById', this.detailInfo).then(
         res => {
@@ -250,6 +331,8 @@ export default {
       this.$store.dispatch('a:device/getMachineById', this.params).then(
         res => {
           this.detailInfo = res || {}
+          this.userId = res.userId
+          this.propertyId = res.propertyId
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

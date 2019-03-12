@@ -40,7 +40,7 @@ const actions = {
   /* 详情 */
   'a:equipmenMall/getTypeById' ({commit}, params) {
     return ajax.api({
-      cmd: 'ime-sys/typeManage/getTypeById',
+      cmd: 'ime-sys/iboxTypeManage/getIboxTypeById',
       parameters: params
     })
   },

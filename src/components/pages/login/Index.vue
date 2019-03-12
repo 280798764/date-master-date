@@ -139,17 +139,14 @@ export default {
         res => {
           this.routerList = res || []
           sessionStorage.setItem('routerList', JSON.stringify(res || []))
-          // this.$router.push('/manageEquipmentType/index')
-          // debugger
           if (this.routerList.length) {
             this.$Message.success('登录成功！')
-            this.$router.push('/device/index')
-            // this.$router.push('/manageEquipmentType')
+            console.log(this.routerList[0])
+            this.$router.push('/systemBig/index')
           } else {
             this.alert('无权限登录', 'error')
             this.$router.push('/index')
           }
-          // sessionStorage.setItem('userToken', res.token)
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

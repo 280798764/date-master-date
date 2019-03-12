@@ -36,11 +36,14 @@
         <input type="text" v-model.trim="picList.picTitle">
         <label>图片URL</label>
         <input type="text" v-model.trim="picList.picPath">
-        <button class="uploadFile">上传</button>
+        <div class="fileBox">
+          <button class="uploadFile">上传</button>
+          <input type="file" class="fileUp" @change="getFile">
+        </div>
       </div>
       <div class="filter-line reset-height">
         <label>图片预览</label>
-        <div class="imgBox">
+        <div class="imgBox" v-if="picList.picPath">
           <img :src="picList.picPath">
         </div>
       </div>
@@ -88,6 +91,18 @@ export default {
     }
   },
   methods: {
+    // 拿取文件
+    getFile (e) {
+      let file = e.target.files[0]
+      this.$store.dispatch('a:file/fileUploadToQiNiu', file).then(
+        res => {
+          this.picList.picPath = res.downloadUrl
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     // 校验空字段
     empty () {
       if (!this.params2.code) {
@@ -110,6 +125,7 @@ export default {
           this.params2.name = res.mainType.genreName || ''
           this.params2.code = res.mainType.mainTypeCode || ''
           this.params2.mainTypeId = res.mainType.id || ''
+          this.params2.picId1 = res.picList[0] && res.picList[0].id
           this.picList = res.picList[0] || {}
         },
         rej => {
@@ -136,6 +152,8 @@ export default {
       if (!this.empty()) {
         return
       }
+      this.params2.picpath1 = this.picList.picPath || ''
+      this.params2.pictitle1 = this.picList.picTitle || ''
       this.$store.dispatch('a:systemBig/saveMainType', this.params2).then(
         res => {
           this.$router.push('/systemBig/index')
@@ -171,6 +189,10 @@ export default {
   .imgBox {
     width: 190px;
     height: 110px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   .reset-height {
     height: inherit;
@@ -184,5 +206,16 @@ export default {
     border: none;
     color: #fff;
     margin-left: 30px;
+  }
+  .fileBox {
+    position: relative;
+  }
+  .fileUp {
+    position: absolute;
+    left:30px;
+    top: 0;
+    opacity: 0;
+    width: 60px !important;
+    overflow: hidden;
   }
 </style>

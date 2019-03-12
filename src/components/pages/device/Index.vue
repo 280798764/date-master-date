@@ -22,7 +22,7 @@
           <label>系统大类</label>
           <div class="select-wrapper">
             <Select clearable v-model="params.mainTypeCode">
-              <Option v-for="item in mainTypeListNoPage" :value="item.id" :key="item.id">{{item.mainTypeName}}</Option>
+              <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>系统小类</label>
@@ -37,36 +37,47 @@
           <input type="text" v-model="params.symgMSerialNo">
           <label>设备大类</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.mainTypeCode">
+            <Select clearable v-model="params.iboxMainTypeCode">
               <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
           <label>设备小类</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.symgMachineTypeId">
+            <Select clearable v-model="params.iboxTypeId">
               <Option v-for="item in iboxTypeList" :value="item.typeId" :key="item.typeId">{{item.typeName}}</Option>
             </Select>
           </div>
         </div>
         <div class="filter-line">
-
           <label>设备制造商</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.madeFactoryId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="params.madeFactoryId" filterable clearable>
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
           <label>所有权</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.orgNameId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="params.orgNameId" filterable clearable>
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
           <label>使用权</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.userNameId">
-              <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{item.facName}}</Option>
-            </Select>
+            <Row>
+              <Col span="40" style="padding-right:10px">
+              <Select v-model="params.userNameId" filterable clearable>
+                <Option v-for="item in factory" :value="item.facId" :key="item.facId">{{ item.facName }}</Option>
+              </Select>
+              </Col>
+            </Row>
           </div>
         </div>
         <div class="filter-line">
@@ -119,6 +130,8 @@
               <!--<td><div class="icon"><img class="imgIcon" :src="props.item.icon + '?imageView2/1/w/105/h/60'"></div></td>-->
               <td><div>{{props.item.genreName}}</div></td>
               <td><div>{{props.item.typeName}}</div></td>
+              <td><div>{{props.item.iboxMainTypeName}}</div></td>
+              <td><div>{{props.item.iboxTypeName}}</div></td>
               <td><div>{{props.item.equserialno}}</div></td>
               <td><div>{{props.item.madeFactoryName}}</div></td>
               <td><div>{{props.item.propertyName}}</div></td>
@@ -134,8 +147,8 @@
               <td><div>{{props.item.leaveDate}}</div></td>
               <td class="operations-td wid-100px">
                 <div class="operations flex-center">
-                  <div class="btn btn-detail" @click.stop="readRecord(props.item.equId)">初始seafile</div>
-                  <div class="btn btn-detail" @click.stop="readRecord(props.item.equId)">初始Ldap</div>
+                  <div class="btn btn-detail" @click.stop="initSeafile(props.item.equserialno)">初始seafile</div>
+                  <div class="btn btn-detail" @click.stop="initLdapUser(props.item.equserialno)">初始Ldap</div>
                   <div class="btn btn-detail" @click.stop="edit('edit', props.item.equId)">编辑</div>
                   <div class="btn btn-delete" @click.stop="deleteMachineById(props.item.equId, props.item.serNo, props.item.equserialno)">删除</div>
                 </div>
@@ -143,11 +156,6 @@
             </template>
           </custom-table>
           <div style="margin: 20px auto" class="pageStyle">
-            <div class="left">
-              <span>跳转至</span>
-              <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
-              <span>页</span>
-            </div>
             <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
             <div class="total-pages">
               <span>共</span>
@@ -155,7 +163,6 @@
               <span>页</span>
             </div>
           </div>
-          <!--<pagination v-if="pageInfo.totalElements" :pageInfo="pageInfo" @pageChange="pageChange"></pagination>-->
         </section>
       </section>
 
@@ -168,7 +175,7 @@
 import mixinsTable from '@/utils/mixinsTable'
 // import mixinsInfo from '@/utils/mixinsInfo'
 // import { DOMAIN } from '@/utils/config'
-const thead = ['大类', '小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
+const thead = ['系统大类', '系统小类', '设备大类', '设备小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
@@ -229,6 +236,30 @@ export default {
     this.getFacNameAndId()
   },
   methods: {
+    // 初始化ldap
+    initLdapUser (equserialno) {
+      this.$store.dispatch('a:device/initLdapUser', {serNo: equserialno}).then(
+        res => {
+          this.alert('初始化Ldap成功!', 'success')
+          this.getTableList(this.cmd, this.params)
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 初始化seafile
+    initSeafile (equserialno) {
+      this.$store.dispatch('a:device/initToken', {serNo: equserialno}).then(
+        res => {
+          this.alert('初始化seafile成功!', 'success')
+          this.getTableList(this.cmd, this.params)
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     // 查询
     searchTab () {
       this.pageInfoReq.page = 0

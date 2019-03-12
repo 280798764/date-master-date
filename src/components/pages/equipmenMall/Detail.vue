@@ -2,12 +2,12 @@
   <section>
     <div class="page-title-wrapper" >
       <span class="icon-title"></span>
-      <span v-if="inTotype === 'create'">系统大类新增</span>
-      <span v-if="inTotype === 'edit'">系统大类编辑</span>
+      <span v-if="inTotype === 'create'">设备小类新增</span>
+      <span v-if="inTotype === 'edit'">设备小类编辑</span>
     </div>
     <section class="filter-wrapper">
       <div class="filter-line">
-        <label>大类名称</label>
+        <label>大类名称<span class="require">*</span></label>
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
@@ -27,7 +27,7 @@
       <div class="filter-line reset-height">
         <label>描述 <span class="require">*</span></label>
         <div>
-          <textarea name="" id="" cols="50" rows="10" class="textarea" v-model="resInfo.descript"></textarea>
+          <textarea name="" id="" cols="50" rows="10" class="textarea" v-model="resInfo.mtDescription"></textarea>
         </div>
       </div>
       <!-- 底部功能按钮 -->
@@ -55,7 +55,8 @@ export default {
         mainTypeCode: '', // 大类名称code
         descript: '', // 描述
         code: '', // 小类code
-        name: ''// 小类名称
+        name: '', // 小类名称
+        mtDescription: ''// 描述
       }
     }
   },
@@ -71,10 +72,10 @@ export default {
   methods: {
     detail () {
       if (this.params.typeId) {
-        this.$store.dispatch('a:equipmenMall/getIboxTypeById', this.params).then(
+        this.$store.dispatch('a:equipmenMall/getTypeById', this.params).then(
           res => {
             this.resInfo.mainTypeCode = res.mainTypeCode || ''
-            this.resInfo.descript = res.descript || ''
+            this.resInfo.mtDescription = res.descript || ''
             this.resInfo.code = res.typeCode || ''
             this.resInfo.name = res.typeName || ''
           },
@@ -97,7 +98,7 @@ export default {
       } else if (!this.resInfo.name) {
         this.alert('小类名称不能为空！', 'error')
         return false
-      } else if (!this.resInfo.descript) {
+      } else if (!this.resInfo.mtDescription) {
         this.alert('描述不能为空！', 'error')
         return false
       }
@@ -107,6 +108,7 @@ export default {
       if (!this.empty()) {
         return
       }
+      this.resInfo.descript = this.resInfo.mtDescription
       this.$store.dispatch('a:equipmenMall/updataIboxType', this.resInfo).then(
         res => {
           this.$router.push('/equipmenMall/index')

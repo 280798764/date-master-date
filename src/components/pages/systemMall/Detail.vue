@@ -11,28 +11,24 @@
         <div class="select-wrapper">
           <Row>
             <Col span="40" style="padding-right:10px">
-            <Select v-model="editParams.mainTypeCode" filterable clearable>
+            <Select v-model="editParams.mtClass" filterable clearable>
               <Option v-for="item in machineTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{ item.mainTypeName }}</Option>
             </Select>
             </Col>
           </Row>
         </div>
         <label>CODE<span class="require">*</span></label>
-        <input v-if="inTotype === 'edit'" type="text" v-model.trim="editParams.typeCode" readonly>
-        <input v-else type="text" v-model.trim="editParams.code">
+        <input v-if="inTotype === 'edit'" type="text" v-model.trim="editParams.mtClass2" readonly>
+        <input v-else type="text" v-model.trim="editParams.mtClass2">
       </div>
       <div class="filter-line">
          <label>名称  <span class="require">*</span></label>
-       <input type="text" v-model.trim="editParams.typeName">
+       <input type="text" v-model.trim="editParams.mtName">
         <label>地图类别名称</label>
         <div class="select-wrapper">
-          <Row>
-            <Col span="40" style="padding-right:10px">
-            <Select v-model="editParams.mapTypeName" filterable clearable>
-              <Option v-for="item in mapList" :value="item.typeName" :key="item.typeName">{{ item.typeName }}</Option>
-            </Select>
-            </Col>
-          </Row>
+          <Select v-model="editParams.bigmapTypeId" clearable>
+            <Option v-for="item in mapList" :value="item.id" :key="item.di">{{ item.typeName }}</Option>
+          </Select>
         </div>
       </div>
       <div class="filter-line">
@@ -40,13 +36,9 @@
        <input type="text" v-model.trim="editParams.simpleDescription">
         <label>参数集</label>
         <div class="select-wrapper">
-          <Row>
-            <Col span="40" style="padding-right:10px">
-            <Select v-model="editParams.vdpParams" filterable clearable>
-              <Option v-for="item in items" :value="item.type" :key="item.type">{{ item.type }}</Option>
-            </Select>
-            </Col>
-          </Row>
+          <Select v-model="editParams.vdpParams" clearable>
+            <Option v-for="item in items" :value="item.type" :key="item.type">{{item.type}}</Option>
+          </Select>
         </div>
       </div>
       <div class="filter-line">
@@ -62,20 +54,24 @@
       <div class="filter-line reset-height">
         <label>描述 <span class="require">*</span></label>
         <div>
-          <textarea name="" cols="50" rows="10" class="textarea" v-model="editParams.description"></textarea>
+          <textarea name="" cols="50" rows="10" class="textarea" v-model="editParams.mtDescription"></textarea>
         </div>
       </div>
       <div class="filter-line">
         <label>图片标题</label>
-        <input type="text" v-model.trim="picList.picTitle">
+        <input type="text" v-model.trim="editParams.picTitle1">
         <label>图片URL</label>
-        <input type="text" v-model.trim="picList.picPath">
-        <button class="uploadFile">上传</button>
+        <input type="text" v-model.trim="picPath">
+        <div class="fileBox">
+          <button class="uploadFile">上传</button>
+          <input type="file" class="fileUp" @change="getFile">
+        </div>
+        <!--<button class="uploadFile">上传</button>-->
       </div>
       <div class="filter-line reset-height">
         <label>图片预览</label>
-        <div class="imgBox">
-          <img :src="picList.picPath">
+        <div class="imgBox" v-if="picPath">
+          <img :src="picPath">
         </div>
       </div>
       <!-- 底部功能按钮 -->
@@ -101,22 +97,26 @@ export default {
       machineTypeList: [], // 大类
       mapList: [], // 地图类别
       editParams: {
-        description: '',
-        mainTypeCode: '',
-        mapTypeName: '',
+        bigmapTypeId: '', // 地图类别
+        mtClass: '', // 大类
+        mtClass2: '', // code
+        mtDescription: '', // 描述
+        mtName: '', // 名称
+        picId1: '',
+        picpath1: '', //  图片路径
         simpleDescription: '', // 简述
-        typeCode: '',
-        typeName: '',
-        vdpParams: '',
-        vdpService: '',
-        vdpShow: '',
-        picPath1: '',
-        picTitle1: ''
+        pictitle1: '', // 图片标题
+        typeId: '', // 获取详情id
+        vdpParams: '', // 参数
+        vdpShow: '', // 展示界面
+        vdpService: '' // 服务
       },
       picList: {
         picPath: '',
         picTitle: ''
       },
+      picPath: '',
+      picTitle: '',
       items: []
     }
   },
@@ -125,24 +125,37 @@ export default {
     this.getMapList()
     this.getAll()
     this.params.typeId = JSON.parse(sessionStorage.getItem('editId'))
+    this.editParams.typeId = JSON.parse(sessionStorage.getItem('editId'))
     this.inTotype = sessionStorage.getItem('editType')
     if (this.inTotype === 'edit') {
       this.detail()
     }
   },
   methods: {
+    // 拿取文件
+    getFile (e) {
+      let file = e.target.files[0]
+      this.$store.dispatch('a:file/fileUploadToQiNiu', file).then(
+        res => {
+          this.picPath = res.downloadUrl
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     // 校验空字段
     empty () {
-      if (!this.editParams.mainTypeCode) {
+      if (!this.editParams.mtClass) {
         this.alert('大类不能为空！', 'error')
         return false
-      } else if (!this.editParams.typeCode) {
+      } else if (!this.editParams.mtClass2) {
         this.alert('CODE不能为空！', 'error')
         return false
-      } else if (!this.editParams.typeName) {
+      } else if (!this.editParams.mtName) {
         this.alert('名称不能为空！', 'error')
         return false
-      } else if (!this.editParams.description) {
+      } else if (!this.editParams.mtDescription) {
         this.alert('描述不能为空！', 'error')
         return false
       }
@@ -151,18 +164,19 @@ export default {
     detail () {
       this.$store.dispatch('a:equipmenMall/getTypeById', this.params).then(
         res => {
-          this.editParams.description = res.type.description
-          this.editParams.mainTypeCode = res.type.mainTypeCode
-          this.editParams.mapTypeName = res.type.mapTypeName
-          this.editParams.simpleDescription = res.type.simpleDescription
-          this.editParams.typeCode = res.type.typeCode
-          this.editParams.typeName = res.type.typeName
+          this.editParams.mtDescription = res.type.description
+          this.editParams.mtClass = res.type.mainTypeCode
+          this.editParams.mtName = res.type.typeName
+          this.editParams.mtClass2 = res.type.typeCode
+          this.editParams.bigmapTypeId = Number(res.type.mapTypeId)
           this.editParams.vdpParams = res.type.vdpParams
           this.editParams.vdpService = res.type.vdpService
           this.editParams.vdpShow = res.type.vdpShow
+          this.editParams.simpleDescription = res.type.simpleDescription
+          this.editParams.typeCode = res.type.typeCode
           this.picList = res.picList[0] || []
-          this.editParams.picPath1 = res.picList[0] && res.picList[0].picPath
-          this.editParams.picTitle1 = res.picList[0] && res.picList[0].picTitle
+          this.picTitle1 = res.picList[0] && res.picList[0].picTitle
+          this.picPath = res.picList[0] && res.picList[0].picPath
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
@@ -173,9 +187,9 @@ export default {
       if (!this.empty()) {
         return
       }
-      this.params2.picpath1 = this.picList.picPath || ''
-      this.params2.pictitle1 = this.picList.picTitle || ''
-      this.$store.dispatch('a:systemMall/updataMainType', this.params2).then(
+      this.editParams.picpath1 = this.picPath || ''
+      this.editParams.pictitle1 = this.picTitle || ''
+      this.$store.dispatch('a:systemMall/updataType', this.editParams).then(
         res => {
           this.$router.push('/systemMall/index')
         },
@@ -188,7 +202,9 @@ export default {
       if (!this.empty()) {
         return
       }
-      this.$store.dispatch('a:systemBig/saveMainType', this.params2).then(
+      this.editParams.picpath1 = this.picPath || ''
+      this.editParams.pictitle1 = this.picTitle || ''
+      this.$store.dispatch('a:systemMall/saveType', this.editParams).then(
         res => {
           this.$router.push('/systemMall/index')
         },
@@ -249,6 +265,10 @@ export default {
   .imgBox {
     width: 190px;
     height: 110px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   .reset-height {
     height: inherit;
@@ -262,5 +282,16 @@ export default {
     border: none;
     color: #fff;
     margin-left: 30px;
+  }
+  .fileBox {
+    position: relative;
+  }
+  .fileUp {
+    position: absolute;
+    left:30px;
+    top: 0;
+    opacity: 0;
+    width: 60px !important;
+    overflow: hidden;
   }
 </style>

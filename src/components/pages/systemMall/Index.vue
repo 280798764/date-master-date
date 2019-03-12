@@ -47,8 +47,11 @@
     </section>
     <div class="page-title-wrapper" >
       <span class="icon-title"></span>
-      <span>设备小类列表</span>
+      <span>系统小类列表</span>
     </div>
+    <section class="func-btns-wrapper">
+      <div class="func-btn btn-create" @click="edit('create')">新建</div>
+    </section >
     <section class="table-wrapper">
       <section class="list-wrapper custom-scroll scroll">
         <custom-table :thead="thead" :tbody="tbody" :scroll="true">
@@ -56,6 +59,7 @@
             <td><div>{{props.item.typeCode}}</div></td>
             <td><div>{{props.item.typeName}}</div></td>
             <td><div>{{props.item.mainTypeName}}</div></td>
+            <td><div>后端需添加品牌字段</div></td>
             <td><div>{{props.item.mapTypeName}}</div></td>
             <td><div>{{props.item.vdpParams}}</div></td>
             <td><div>{{props.item.vdpService}}</div></td>
@@ -71,11 +75,6 @@
           </template>
         </custom-table>
         <div style="margin: 20px auto" class="pageStyle">
-          <div class="left">
-            <span>跳转至</span>
-            <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
-            <span>页</span>
-          </div>
           <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
           <div class="total-pages">
             <span>共</span>
@@ -90,7 +89,7 @@
 
 <script>
 import mixinsTable from '@/utils/mixinsTable'
-const thead = ['小类CODE', '类别名称', '大类', '地图类别名称', '参数集', '服务', '展示界面', '简述', '描述', '操作']
+const thead = ['小类CODE', '类别名称', '大类', '品牌', '地图类别名称', '参数集', '服务', '展示界面', '简述', '描述', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
@@ -132,7 +131,7 @@ export default {
     // 编辑/新建
     edit (type, id) {
       this.$router.push('/systemMall/detail')
-      sessionStorage.setItem('editId', JSON.stringify(id))
+      sessionStorage.setItem('editId', JSON.stringify(id || ''))
       sessionStorage.setItem('editType', type)
     },
     deleteMachineById () {},

@@ -92,6 +92,20 @@ const actions = {
       cmd: 'ime-sys/iboxTypeManage/getIboxTypeListNoPage',
       parameters: params
     })
+  },
+  /* 初始化seafile */
+  'a:device/initToken' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/initToken',
+      parameters: params
+    })
+  },
+  /* 初始化ldap */
+  'a:device/initLdapUser' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/initLdapUser',
+      parameters: params
+    })
   }
 }
 

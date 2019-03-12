@@ -84,6 +84,38 @@ export default {
       )
     })
   },
+  // 文件上传至七牛---目前使用
+  apiUploadQiNiu2 (file) {
+    return new Promise((resolve, reject) => {
+      this.apiPublic({
+        cmd: 'support/file/requestUploadToken',
+        parameters: {
+          appID: 'i5OS',
+          appCode: '',
+          appType: '',
+          bizId: 1
+        }
+      }).then(
+        res => {
+          let token = res
+          let formData = new window.FormData()
+          formData.append('token', token)
+          formData.append('file', file)
+          return axios.post(DOMAIN.qiNiu, formData).then(
+            res => {
+              resolve(res.data)
+            },
+            rej => {
+              resolve(rej)
+            }
+          )
+        },
+        rej => {
+          console.log(rej.errorInfo)
+          resolve(rej)
+        })
+    })
+  },
   // 获取文件上传至七牛需要的token
   apiGetQiNiuToken () {
     return new Promise((resolve, reject) => {

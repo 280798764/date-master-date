@@ -2,8 +2,8 @@
   <section>
     <div class="page-title-wrapper" >
       <span class="icon-title"></span>
-      <span v-if="inTotype === 'create'">系统大类新增</span>
-      <span v-if="inTotype === 'edit'">系统大类编辑</span>
+      <span v-if="inTotype === 'create'">设备大类新增</span>
+      <span v-if="inTotype === 'edit'">设备大类编辑</span>
     </div>
     <section class="filter-wrapper">
       <div class="filter-line">

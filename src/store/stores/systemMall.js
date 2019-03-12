@@ -37,6 +37,20 @@ const actions = {
       parameters: params
     })
   },
+  /* 修改 */
+  'a:systemMall/updataType' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/typeManage/updataType',
+      parameters: params
+    })
+  },
+  /* 新建 */
+  'a:systemMall/saveType' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/typeManage/saveType',
+      parameters: params
+    })
+  },
   /* 列表 */
   'a:systemMall/getTypeList' ({commit}, parameters = {}) {
     return ajax.api({

@@ -2,7 +2,7 @@
   <section class="wrapper-box">
     <div class="page-title-wrapper" >
       <span class="icon-title"></span>
-      <span>设备大类管理</span>
+      <span>设备小类管理</span>
     </div>
     <!--过滤条件-->
     <section class="filter-wrapper">
@@ -38,7 +38,7 @@
     </section >
     <div class="page-title-wrapper" >
       <span class="icon-title"></span>
-      <span>设备大类列表</span>
+      <span>设备小类列表</span>
     </div>
     <section class="table-wrapper">
       <section class="list-wrapper custom-scroll scroll">
