@@ -75,7 +75,7 @@
           </template>
         </custom-table>
         <div style="margin: 20px auto" class="pageStyle">
-          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfoReq.page + 1" @on-change="changepage" class="Page"/>
           <div class="total-pages">
             <span>共</span>
             <span class="count">{{pageInfo.totalPages}}</span>
@@ -95,8 +95,8 @@ export default {
   data () {
     return {
       cmd: 'a:systemMall/getTypeList',
-      pageInfo: '',
-      pageNo: '',
+      pageInfo: {},
+      pageNo: 1,
       tbody: [],
       thead: thead,
       params: {
@@ -133,6 +133,8 @@ export default {
       this.$router.push('/systemMall/detail')
       sessionStorage.setItem('editId', JSON.stringify(id || ''))
       sessionStorage.setItem('editType', type)
+      sessionStorage.setItem('backParams', JSON.stringify(this.params))
+      sessionStorage.setItem('savePageStart', this.pageInfoReq.page)
     },
     deleteMachineById () {},
     jumpTo () {

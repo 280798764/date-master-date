@@ -156,7 +156,7 @@
             </template>
           </custom-table>
           <div style="margin: 20px auto" class="pageStyle">
-            <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+            <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfoReq.page + 1" @on-change="changepage" class="Page"/>
             <div class="total-pages">
               <span>共</span>
               <span class="count">{{pageInfo.totalPages}}</span>
@@ -180,7 +180,7 @@ export default {
   mixins: [mixinsTable],
   data () {
     return {
-      pageNo: '',
+      pageNo: 1,
       cmd: 'a:device/getMachineList',
       params: {
         brand: '',
@@ -288,6 +288,8 @@ export default {
       this.$router.push('/device/detail')
       sessionStorage.setItem('editId', id)
       sessionStorage.setItem('editType', type)
+      sessionStorage.setItem('backParams', JSON.stringify(this.params))
+      sessionStorage.setItem('savePageStart', this.pageInfoReq.page)
     },
     obtainType (code) {
       let obtainArr = this.machineObtainType.filter(item => {

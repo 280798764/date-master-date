@@ -44,6 +44,13 @@ const actions = {
       parameters: params
     })
   },
+  /* 详情 */
+  'a:systemMall/getTypeById' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/typeManage/getTypeById',
+      parameters: params
+    })
+  },
   /* 新建 */
   'a:systemMall/saveType' ({commit}, params) {
     return ajax.api({

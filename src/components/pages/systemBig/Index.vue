@@ -52,7 +52,7 @@
             <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
             <span>页</span>-->
           </div>
-          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfoReq.page + 1" @on-change="changepage" class="Page"/>
           <div class="total-pages">
             <span>共</span>
             <span class="count">{{pageInfo.totalPages}}</span>
@@ -66,14 +66,13 @@
 
 <script>
 import mixinsTable from '@/utils/mixinsTable'
-const thead = ['CODE', '名称', '品牌', '描述', '操作']
+const thead = ['CODE', '大类名称', '品牌', '描述', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
     return {
       cmd: 'a:systemBig/getMainTypeList',
-      pageInfo: '',
-      pageNo: '',
+      pageNo: 1,
       tbody: [],
       thead: thead,
       params: {
@@ -83,7 +82,8 @@ export default {
       brandList: [], // 品牌
       deleteParams: {
         mainTypeId: ''
-      }
+      },
+      pageInfo: {}
     }
   },
   mounted () {
@@ -132,11 +132,17 @@ export default {
       } else {
         sessionStorage.setItem('editId', JSON.stringify(''))
       }
+      sessionStorage.setItem('backParams', JSON.stringify(this.params))
+      sessionStorage.setItem('savePageStart', this.pageInfoReq.page)
     },
     jumpTo () {
       this.pageChange()
     },
     pageChange () {
+      let savePageStart = sessionStorage.getItem('savePageStart')
+      if (savePageStart) {
+        this.pageInfoReq.page = savePageStart
+      }
       let pages = Math.ceil(this.pageInfo.totalCount / 10)
       if (this.pageNo > pages || this.pageNo <= 0) {
         this.alert('请输入正确的页码！', 'error')

@@ -162,9 +162,9 @@ export default {
       return true
     },
     detail () {
-      this.$store.dispatch('a:equipmenMall/getTypeById', this.params).then(
+      this.$store.dispatch('a:systemMall/getTypeById', this.params).then(
         res => {
-          this.editParams.mtDescription = res.type.description
+          this.editParams.mtDescription = res.type && res.type.description
           this.editParams.mtClass = res.type.mainTypeCode
           this.editParams.mtName = res.type.typeName
           this.editParams.mtClass2 = res.type.typeCode

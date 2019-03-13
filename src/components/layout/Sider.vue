@@ -66,7 +66,9 @@ export default {
     this.navList = JSON.parse(sessionStorage.getItem('routerList'))
   },
   methods: {
-    firstIndex () {},
+    firstIndex () {
+      sessionStorage.setItem('backParams', JSON.stringify({}))
+    },
     clearFilterParams () {},
     toggleSubNav (nav, i) {
       // this.$router.push(this.idToPath[nav.url])

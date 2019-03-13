@@ -1,6 +1,6 @@
 /* 表单相关mixins */
 import tool from '@/utils/tool'
-import { CustomTable, Pagination, DateRange } from '@/components/modules'
+import { CustomTable, Pagination, DateRange, CustomRadio } from '@/components/modules'
 
 export default {
   data () {
@@ -41,7 +41,8 @@ export default {
   components: {
     CustomTable,
     Pagination,
-    DateRange
+    DateRange,
+    CustomRadio
   },
   created () {
     // 获取登陆角色
@@ -51,6 +52,12 @@ export default {
     if (page > 0) {
       this.params = tool.getFilterParams()
       this.pageInfoReq.page = page
+    }
+    let backParams = JSON.parse(sessionStorage.getItem('backParams'))
+    if (backParams) {
+      for (let item in backParams) {
+        this.params[item] = backParams[item]
+      }
     }
   },
   methods: {
@@ -100,7 +107,16 @@ export default {
     pageChange (page) {
       this.pageInfoReq.page = +page
       this.search()
+      console.log(4)
     },
+    // 记住页码并搜索页面
+    /* savePageSearch () {
+      let savePageStart = sessionStorage.getItem('savePageStart')
+      if (savePageStart && savePageStart !== '1') {
+        console.log(savePageStart, 'savePageStart')
+        this.pageChange(savePageStart)
+      }
+    }, */
     // 跳转至详情页面, level：列表页不传, 当前详情页等级1234...依次类推
     readRecord (id, path, level) {
       if (!level) {

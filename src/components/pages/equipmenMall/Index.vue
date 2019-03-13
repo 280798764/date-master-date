@@ -59,11 +59,8 @@
         </custom-table>
         <div style="margin: 20px auto" class="pageStyle">
           <div class="left">
-            <!-- <span>跳转至</span>
-             <input type="text" v-model.trim="pageNo" v-on:blur="jumpTo" v-on:keyup.enter="jumpTo">
-             <span>页</span>-->
           </div>
-          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfo.pageNo" @on-change="changepage" class="Page"/>
+          <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfoReq.page + 1" @on-change="changepage" class="Page"/>
           <div class="total-pages">
             <span>共</span>
             <span class="count">{{pageInfo.totalPages}}</span>
@@ -82,6 +79,7 @@ export default {
   mixins: [mixinsTable],
   data () {
     return {
+      pageNo: 1,
       thead: thead,
       tbody: [],
       cmd: 'a:equipmenMall/getIboxTypeList',
@@ -132,6 +130,8 @@ export default {
       } else {
         sessionStorage.setItem('editId', JSON.stringify(''))
       }
+      sessionStorage.setItem('backParams', JSON.stringify(this.params))
+      sessionStorage.setItem('savePageStart', this.pageInfoReq.page)
     },
     // 查询
     searchTab () {
