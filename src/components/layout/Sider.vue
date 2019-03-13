@@ -68,6 +68,7 @@ export default {
   methods: {
     firstIndex () {
       sessionStorage.setItem('backParams', JSON.stringify({}))
+      sessionStorage.setItem('savePageStart', JSON.stringify(0))
     },
     clearFilterParams () {},
     toggleSubNav (nav, i) {

@@ -54,6 +54,9 @@ export default {
       this.pageInfoReq.page = page
     }
     let backParams = JSON.parse(sessionStorage.getItem('backParams'))
+    // 记住进入的页码
+    let savePageStart = JSON.parse(sessionStorage.getItem('savePageStart'))
+    this.pageInfoReq.page = savePageStart
     if (backParams) {
       for (let item in backParams) {
         this.params[item] = backParams[item]
