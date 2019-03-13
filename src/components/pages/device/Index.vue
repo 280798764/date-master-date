@@ -116,7 +116,7 @@
       </section>
       <section class="func-btns-wrapper">
         <div class="func-btn btn-create" @click="createAccount('create')">批量导入</div>
-        <div class="func-btn btn-create" @click="searchAccount('create')">初始化</div>
+        <div class="func-btn btn-create" @click="initParamsConfig">初始化</div>
         <div class="func-btn btn-create" @click="edit('create')">新建</div>
       </section >
       <div class="page-title-wrapper" >
@@ -125,9 +125,9 @@
       </div>
       <section class="table-wrapper">
         <section class="list-wrapper custom-scroll scroll">
-          <custom-table :thead="thead" :tbody="tbody" :scroll="true">
+          <custom-table-checkbox :thead="thead" :tbody="tbody" :scroll="true" :selectAll="selectAllFlag" @selectRecord="selectRecord" @selectAllRecord="selectAllRecord">
             <template slot="item" slot-scope="props">
-              <!--<td><div class="icon"><img class="imgIcon" :src="props.item.icon + '?imageView2/1/w/105/h/60'"></div></td>-->
+              <td class="wid-30px"><div><custom-radio-for-table :radioChecked="props.item.selected" @clickRadio="selectRecord(props.item)" style="margin-top: 12px;"></custom-radio-for-table></div></td>
               <td><div>{{props.item.genreName}}</div></td>
               <td><div>{{props.item.typeName}}</div></td>
               <td><div>{{props.item.iboxMainTypeName}}</div></td>
@@ -154,7 +154,7 @@
                 </div>
               </td>
             </template>
-          </custom-table>
+          </custom-table-checkbox>
           <div style="margin: 20px auto" class="pageStyle">
             <Page :total="pageInfo.totalElements" :page-size="10" :current="pageInfoReq.page + 1" @on-change="changepage" class="Page"/>
             <div class="total-pages">
@@ -180,6 +180,7 @@ export default {
   mixins: [mixinsTable],
   data () {
     return {
+      selectAllFlag: false, // 单选按钮（全选）
       pageNo: 1,
       cmd: 'a:device/getMachineList',
       params: {
@@ -236,6 +237,42 @@ export default {
     this.getFacNameAndId()
   },
   methods: {
+    // 选择记录
+    selectRecord (item) {
+      // 排除undefind的场合
+      if (item.selected || item.selected === false) item.selected = !item.selected
+      this.$forceUpdate()
+    },
+    // 全选或者全不选
+    selectAllRecord (flag) {
+      this.selectAllFlag = !flag
+      this.tbody.forEach(item => {
+        item.selected = this.selectAllFlag
+      })
+    },
+    // 初始化
+    initParamsConfig () {
+      let list = this.tbody.map(item => {
+        if (item.selected === true) {
+          return item.equserialno
+        }
+      })
+      let list2 = list.filter(item => {
+        return item !== undefined
+      })
+      if (list2.length) {
+        this.$store.dispatch('a:device/initParamsConfig', {list: list2}).then(
+          res => {
+            this.alert('初始化成功!', 'success')
+            this.getTableList(this.cmd, this.params)
+          },
+          rej => {
+            this.alert(rej.errorInfo, 'error')
+          }
+        )
+      }
+      this.selectAllFlag = false
+    },
     // 初始化ldap
     initLdapUser (equserialno) {
       this.$store.dispatch('a:device/initLdapUser', {serNo: equserialno}).then(

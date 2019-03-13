@@ -1,6 +1,6 @@
 /* 表单相关mixins */
 import tool from '@/utils/tool'
-import { CustomTable, Pagination, DateRange, CustomRadio } from '@/components/modules'
+import { CustomTable, Pagination, DateRange, CustomRadio, CustomRadioForTable, CustomTableCheckbox } from '@/components/modules'
 
 export default {
   data () {
@@ -42,7 +42,9 @@ export default {
     CustomTable,
     Pagination,
     DateRange,
-    CustomRadio
+    CustomRadio,
+    CustomRadioForTable,
+    CustomTableCheckbox
   },
   created () {
     // 获取登陆角色
@@ -90,6 +92,11 @@ export default {
       }).then(
         res => {
           this.tbody = res.content || []
+          if (cmd === 'a:device/getMachineList') {
+            this.tbody.forEach(function (item) {
+              item.selected = false
+            })
+          }
           this.pageInfo = res || []
           // 把pageInfo封装成对象
           /* if (res) {

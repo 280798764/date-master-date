@@ -106,6 +106,13 @@ const actions = {
       cmd: 'ime-sys/machineManage/initLdapUser',
       parameters: params
     })
+  },
+  /* 初始化 */
+  'a:device/initParamsConfig' ({commit}, params) {
+    return ajax.api({
+      cmd: 'ime-sys/machineManage/initParamsConfig',
+      parameters: params
+    })
   }
 }
 
