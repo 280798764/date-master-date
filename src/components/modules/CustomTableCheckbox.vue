@@ -1,6 +1,6 @@
 <!-- 表单展示 -->
 <template>
-  <section class="table-wrapper wms-scroll" :class="{'scroll': scroll}">
+  <section class="table-wrapper custom-scroll" :class="{'scroll': scroll}">
     <table>
       <thead>
         <tr>
