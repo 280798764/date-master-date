@@ -64,11 +64,11 @@ export default {
     return new Promise((resolve, reject) => {
       let formData = new FormData()
       formData.append('file', file)
-      formData.append('token', sessionStorage.getItem('token'))
-      axios.post(DOMAIN.fileFTPWMS + cmd, formData).then(
+      formData.append('userToken', sessionStorage.getItem('userToken'))
+      axios.post(cmd, formData).then(
         res => {
-          if (res.data.error) {
-            reject(res.data.error)
+          if (res.data.success === false) {
+            reject(res.data.msg)
           } else {
             resolve(res.data)
           }

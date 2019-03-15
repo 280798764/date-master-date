@@ -115,7 +115,8 @@
         </div>
       </section>
       <section class="func-btns-wrapper">
-        <div class="func-btn btn-create" @click="createAccount('create')">批量导入</div>
+        <div class="func-btn btn-create" @click="beforeUploadFile">批量导入</div>
+        <input class="hidden" type="file" id="uploadFileList" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
         <div class="func-btn btn-create" @click="initParamsConfig">初始化</div>
         <div class="func-btn btn-create" @click="edit('create')">新建</div>
       </section >
@@ -165,21 +166,25 @@
           </div>
         </section>
       </section>
-
     </div>
+    <dialog-list v-if="dlgInfo.showDlg" :dlgInfo="dlgInfo" :params="params" :diffList="diffList" :upFile="upFile" :search="search" @cancel="dlgInfo.showDlg = false" :uploadFileToCloud="uploadFileToCloud"></dialog-list>
   </section>
 </template>
 
 <script>
-// import dialogUpDown from './DialogUpDown.vue'
+import dialogList from './DialogList.vue'
 import mixinsTable from '@/utils/mixinsTable'
 // import mixinsInfo from '@/utils/mixinsInfo'
-// import { DOMAIN } from '@/utils/config'
+import { DOMAIN } from '@/utils/config'
 const thead = ['系统大类', '系统小类', '设备大类', '设备小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
     return {
+      dlgInfo: { // 弹框信息
+        showDlg: false,
+        type: ''
+      },
       selectAllFlag: false, // 单选按钮（全选）
       pageNo: 1,
       cmd: 'a:device/getMachineList',
@@ -221,8 +226,17 @@ export default {
       deleteParams: {
         equId: '',
         serNo: ''
-      }
+      },
+      // 上传的文件
+      upFile: {},
+      // 上传检验不一样的数组
+      diffrentList: [],
+      modal1: false,
+      diffList: []
     }
+  },
+  components: {
+    dialogList
   },
   mounted () {
     this.get()
@@ -237,6 +251,9 @@ export default {
     this.getFacNameAndId()
   },
   methods: {
+    search () {
+      this.getTableList(this.cmd, this.params)
+    },
     // 选择记录
     selectRecord (item) {
       // 排除undefind的场合
@@ -282,6 +299,56 @@ export default {
         },
         rej => {
           this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
+    // 文件上传之前对比判断
+    beforeUploadFile () {
+      this.uploadFile()
+    },
+    // 文件上传事件
+    uploadFile () {
+      let cmd = DOMAIN.uploadPath + '/imedataapi/isMtExists'
+      document.getElementById('uploadFileList').value = ''
+      document.getElementById('uploadFileList').click()
+      document.getElementById('uploadFileList').onchange = e => {
+        let file = e.target.files && e.target.files[0]
+        let fileType = file.name && file.name.substring(file.name.lastIndexOf('.'))
+        if (file === '' || file === null) {
+          this.alert('请选择所要上传的文件！', 'info')
+        } else if (fileType !== '.xls' && fileType !== '.xlsx') {
+          this.alert('上传文件格式不正确!', 'info')
+        } else {
+          this.upFile = file
+          this.uploadFileToCloud(true, file, cmd)
+        }
+      }
+    },
+    sureUpload () {
+      this.uploadFileToCloud(false, this.upFile, DOMAIN.uploadPath + '/imedataapi/importMtToData')
+    },
+    // 文件上传到云
+    uploadFileToCloud (isOnce, file, cmd) {
+      this.$store.dispatch('a:file/fileUpload', {file, cmd}).then(
+        res => {
+          if (isOnce) {
+            if (res.list.length === 0) {
+              this.uploadFileToCloud(false, this.upFile, DOMAIN.uploadPath + '/imedataapi/importMtToData')
+            } else {
+              this.diffList = res.list
+              this.dlgInfo.showDlg = true
+            }
+          } else {
+            this.alert('上传成功！', 'success')
+            this.dlgInfo.showDlg = false
+            this.getTableList(this.cmd, this.params)
+          }
+        },
+        rej => {
+          this.$Modal.error({
+            title: '错误',
+            content: rej
+          })
         }
       )
     },
@@ -471,5 +538,8 @@ export default {
   }
   .func-btns-wrapper {
     margin-bottom: 10px;
+  }
+  .hidden {
+    display: none;
   }
 </style>

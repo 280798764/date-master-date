@@ -8,25 +8,29 @@ const config = {
     origin: '//wms.isesol.com',
     api: '//api.isesol.com',
     fileFTP: '//oncall.isesol.com/oncallapi',
-    qiNiu: '//upload.qbox.me/'
+    qiNiu: '//upload.qbox.me/',
+    uploadPath: '//imedata.isesol.com' // 上传文件 导入
   },
   'pre': {
     origin: '//wms.preisesol.com',
     api: '//api.preisesol.com',
     fileFTP: '//oncall.preisesol.com/oncallapi',
-    qiNiu: '//upload.qbox.me/'
+    qiNiu: '//upload.qbox.me/',
+    uploadPath: '//imedata.preisesol.com' // 上传文件 导入
   },
   'test': {
     origin: '//wms.i5sesol.com',
     api: '//api.i5sesol.com',
     fileFTP: '//oncall.i5sesol.com/oncallapi',
-    qiNiu: '//upload.qbox.me/'
+    qiNiu: '//upload.qbox.me/',
+    uploadPath: '//imedata.i5sesol.com' // 上传文件 导入
   },
   'dev': {
     origin: '//wms.isesoldev.com',
     api: '//api.isesoldev.com',
     fileFTP: '//oncall.isesoldev.com/oncallapi',
-    qiNiu: '//upload.qiniu.com/'
+    qiNiu: '//upload.qiniu.com/',
+    uploadPath: '//imedata.isesoldev.com' // 上传文件 导入
   }
 }
 
