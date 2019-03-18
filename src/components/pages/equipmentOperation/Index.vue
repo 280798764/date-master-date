@@ -261,5 +261,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.redColor {
+  color: red;
+}
 </style>

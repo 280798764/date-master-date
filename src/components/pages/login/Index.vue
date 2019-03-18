@@ -141,7 +141,6 @@ export default {
           sessionStorage.setItem('routerList', JSON.stringify(res || []))
           if (this.routerList.length) {
             this.$Message.success('登录成功！')
-            console.log(this.routerList[0])
             this.$router.push('/systemBig/index')
           } else {
             this.alert('无权限登录', 'error')

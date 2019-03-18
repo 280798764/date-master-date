@@ -287,6 +287,8 @@ export default {
             this.alert(rej.errorInfo, 'error')
           }
         )
+      } else {
+        this.alert('请选择要初始化的数据！', 'info')
       }
       this.selectAllFlag = false
     },
@@ -403,21 +405,24 @@ export default {
     },
     // 删除
     deleteMachineById (equId, serNo, equserialno) {
-      this.deleteParams.equId = equId
-      this.deleteParams.serNo = serNo
+      console.log(equId, serNo, equserialno)
+      this.deleteParams.eduId = equId
+      this.deleteParams.serNo = equserialno
       this.$Modal.confirm({
         title: '提示',
         content: `确认删除【序列号：${equserialno}】的设备吗?`,
         onOk: () => {
+          this.$store.dispatch('a:device/deleteMachineById', this.deleteParams).then(
+            res => {
+              this.alert('删除成功！', 'success')
+              this.getTableList(this.cmd, this.params)
+            },
+            rej => {
+              this.alert(rej.errorInfo, 'error')
+            }
+          )
         }
       })
-      /* this.$store.dispatch('a:device/deleteMachineById', this.deleteParams).then(
-        res => {
-        },
-        rej => {
-          this.alert(rej.errorInfo, 'error')
-        }
-      ) */
     },
     // 获取
     get () {
