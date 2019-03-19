@@ -21,7 +21,7 @@
           </div>
           <label>系统大类</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.mainTypeCode">
+            <Select clearable v-model="params.mainTypeCode" @on-change="getMallSys">
               <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
@@ -37,7 +37,7 @@
           <input type="text" v-model="params.symgMSerialNo">
           <label>设备大类</label>
           <div class="select-wrapper">
-            <Select clearable v-model="params.iboxMainTypeCode">
+            <Select clearable v-model="params.iboxMainTypeCode" @on-change="getMallEqu">
               <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
@@ -135,6 +135,7 @@
               <td><div>{{props.item.iboxTypeName}}</div></td>
               <td><div>{{props.item.equserialno}}</div></td>
               <td><div>{{props.item.madeFactoryName}}</div></td>
+              <td><div>{{props.item.brand}}品牌</div></td>
               <td><div>{{props.item.propertyName}}</div></td>
               <td><div>{{props.item.userName}}</div></td>
               <td><div>{{props.item.mac}}</div></td>
@@ -176,7 +177,7 @@ import dialogList from './DialogList.vue'
 import mixinsTable from '@/utils/mixinsTable'
 // import mixinsInfo from '@/utils/mixinsInfo'
 import { DOMAIN } from '@/utils/config'
-const thead = ['系统大类', '系统小类', '设备大类', '设备小类', '序列号', '设备制造商', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
+const thead = ['系统大类', '系统小类', '设备大类', '设备小类', '序列号', '设备制造商', '品牌', '所有权', '使用权', 'MAC', 'UKEY', '设备密码', '获取类型', 'iport类型', 'vpn更新', '是否上线', '最新初始化时间', '注册时间', '操作']
 export default {
   mixins: [mixinsTable],
   data () {
@@ -244,13 +245,23 @@ export default {
     // this.getMachineList()
     this.getBrandList()
     this.getMainTypeListNoPage()
-    this.getMachineTypeByMainCode()
+    this.getMachineTypeByMainCode(this.params.mainTypeCode)
     this.getMachineObtainType()
     this.getIboxMainTypeList()
-    this.getIboxTypeList()
+    this.getIboxTypeList(this.params.iboxMainTypeCode)
     this.getFacNameAndId()
   },
   methods: {
+    // 系统大类联动系统小类
+    getMallSys () {
+      this.params.symgMachineTypeId = ''
+      this.getMachineTypeByMainCode(this.params.mainTypeCode)
+    },
+    // 设备大类联动设备小类
+    getMallEqu () {
+      this.params.iboxTypeId = ''
+      this.getIboxTypeList(this.params.iboxMainTypeCode)
+    },
     search () {
       this.getTableList(this.cmd, this.params)
     },
@@ -391,8 +402,12 @@ export default {
     },
     // 编辑/新建
     edit (type, id) {
+      if (type === 'create') {
+        sessionStorage.setItem('editId', '')
+      } else {
+        sessionStorage.setItem('editId', id)
+      }
       this.$router.push('/device/detail')
-      sessionStorage.setItem('editId', id)
       sessionStorage.setItem('editType', type)
       sessionStorage.setItem('backParams', JSON.stringify(this.params))
       sessionStorage.setItem('savePageStart', this.pageInfoReq.page)
@@ -405,7 +420,6 @@ export default {
     },
     // 删除
     deleteMachineById (equId, serNo, equserialno) {
-      console.log(equId, serNo, equserialno)
       this.deleteParams.eduId = equId
       this.deleteParams.serNo = equserialno
       this.$Modal.confirm({
@@ -457,8 +471,8 @@ export default {
       )
     },
     // 设备小类
-    getIboxTypeList () {
-      this.$store.dispatch('a:device/getIboxTypeList', {}).then(
+    getIboxTypeList (iboxMainTypeCode) {
+      this.$store.dispatch('a:device/getIboxTypeList', {iboxMainTypeCode: iboxMainTypeCode}).then(
         res => {
           this.iboxTypeList = res || []
         },
@@ -479,8 +493,8 @@ export default {
       )
     },
     // 获取系统小类
-    getMachineTypeByMainCode () {
-      this.$store.dispatch('a:device/getMachineTypeByMainCode', {}).then(
+    getMachineTypeByMainCode (mainTypeCode) {
+      this.$store.dispatch('a:device/getMachineTypeByMainCode', {mainTypeCode: mainTypeCode}).then(
         res => {
           this.machineTypeByMainCode = res || []
         },

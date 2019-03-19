@@ -12,12 +12,12 @@
         <div class="filter-line">
           <label>序列号</label>
           <span class="require">*</span>
-          <input type="text" v-if="detailInfo.equserialno" v-model.trim="detailInfo.equserialno" readonly>
+          <input type="text" v-if="this.params.eduId" v-model.trim="detailInfo.equserialno" readonly>
           <input type="text" v-else v-model.trim="detailInfo.equserialno">
           <label>系统大类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.mainTypeCode">
+            <Select clearable v-model="detailInfo.mainTypeCode" @on-change="getMallSys">
               <Option v-for="item in mainTypeListNoPage" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
@@ -36,7 +36,7 @@
           <label>设备大类</label>
           <span class="require">*</span>
           <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.iboxMainTypeCode">
+            <Select clearable v-model="detailInfo.iboxMainTypeCode" @on-change="getMallEqu">
               <Option v-for="item in iboxMainTypeList" :value="item.mainTypeCode" :key="item.mainTypeCode">{{item.mainTypeName}}</Option>
             </Select>
           </div>
@@ -120,10 +120,10 @@
             </Select>
           </div>
           <label>设置图片</label>
-          <div class="select-wrapper">
-            <Select clearable v-model="detailInfo.imageUrl">
-              <Option v-for="item in vpnNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
-            </Select>
+          <div class="select-wrapper fileBox">
+            <input type="text" class="fileUrl"  v-model.trim="detailInfo.imageUrl" readonly>
+            <button class="uploadFile">上传</button>
+            <input type="file" class="fileUp" title="点击上传" @change="getFile">
           </div>
           <label>是否上线</label>
           <div class="select-wrapper">
@@ -131,43 +131,45 @@
               <Option v-for="item in isOnlineNewList" :value="item.id" :key="item.id">{{item.name}}</Option>
             </Select>
           </div>
-          <!--<label class="app-name-dev special-first">设置图片</label><input type="text"  v-model.trim="detailInfo.specification">-->
         </div>
-        <div class="filter-line" v-if="detailInfo.proChangeTime || detailInfo.changeTime || showPropertyTime || showUserTime">
-          <label style="margin-left: 20px" v-if="detailInfo.changeTime || showUserTime">使用权变更时间</label>
-          <div class="select-wrapper" v-if="detailInfo.changeTime || showUserTime">
-            <Row>
-              <Col span="12">
-                <DatePicker
-                  type="date"
-                  placeholder="使用权变更时间"
-                  :value="detailInfo.changeTime"
-                  @on-change="changeTime($event)"
-                  style="width: 200px"></DatePicker>
-              </Col>
-            </Row>
-          </div>
-          <label v-if="detailInfo.proChangeTime || showPropertyTime" style=" margin-left: 20px">所有权变更时间</label>
-          <div class="select-wrapper" v-if="detailInfo.proChangeTime || showPropertyTime">
-            <Row>
-              <Col span="12">
+        <div v-if="inTotype === 'edit'">
+          <div class="filter-line" v-if=" detailInfo.proChangeTime || detailInfo.changeTime || showPropertyTime || showUserTime">
+            <label v-if="detailInfo.proChangeTime || showPropertyTime" style=" margin-left: 20px">所有权变更时间</label>
+            <div class="select-wrapper" v-if="detailInfo.proChangeTime || showPropertyTime">
+              <Row>
+                <Col span="12">
                 <DatePicker
                   type="date"
                   placeholder="所有权变更时间"
                   :value="detailInfo.proChangeTime"
                   @on-change="changeTime2($event)"
                   style="width: 200px"></DatePicker>
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            </div>
+            <label style="margin-left: 20px" v-if="detailInfo.changeTime || showUserTime">使用权变更时间</label>
+            <div class="select-wrapper" v-if="detailInfo.changeTime || showUserTime">
+              <Row>
+                <Col span="12">
+                <DatePicker
+                  type="date"
+                  placeholder="使用权变更时间"
+                  :value="detailInfo.changeTime"
+                  @on-change="changeTime($event)"
+                  style="width: 200px"></DatePicker>
+                </Col>
+              </Row>
+            </div>
           </div>
         </div>
         <div class="filter-line">
-          <label class="app-name-dev special-first">初始化报文</label><input class="checkbox" type="checkbox" checked>
+          <label class="app-name-dev special-first">初始化报文</label>
+          <input class="checkbox" type="checkbox" v-model="isInit">
         </div>
         <!-- 底部功能按钮 -->
         <section class="btns-group">
-          <div class="btn btn-gray" v-if="this.inTotype === 'create'" @click="save">保存</div>
-          <div class="btn btn-gray" v-if="this.inTotype === 'edit'" @click="edit">修改</div>
+          <div class="btn btn-gray" @click="save">{{detailInfo.equId ? '修改' : '新增'}}</div>
+          <!--<div class="btn btn-gray" v-if="this.inTotype === 'edit'" @click="edit">修改</div>-->
           <div class="btn btn-gray" @click="detail">取消</div>
           <div class="btn btn-gray" @click="backForward">返回</div>
         </section>
@@ -181,6 +183,7 @@
 export default {
   data () {
     return {
+      isInit: true, // 初始化报文
       propertyId: '', // 所有权id
       userId: '', // 使用权id
       showUserTime: '', // 使用权变更时间是否显示
@@ -232,14 +235,15 @@ export default {
         userName: '',
         userNameId: '',
         vpnType: ''
-      }
+      },
+      editParams: {} // 编辑的参数
     }
   },
   mounted () {
-    this.getIboxTypeList()
+    this.getIboxTypeList(this.detailInfo.iboxMainTypeCode)
     this.getBrandList()
     this.getMainTypeListNoPage()
-    this.getMachineTypeByMainCode()
+    this.getMachineTypeByMainCode(this.detailInfo.mainTypeCode)
     this.getMachineObtainType()
     this.getFacNameAndId()
     this.getIboxMainTypeList()
@@ -250,6 +254,29 @@ export default {
     }
   },
   methods: {
+    // 系统大类联动系统小类
+    getMallSys () {
+      this.detailInfo.typeId = ''
+      this.getMachineTypeByMainCode(this.detailInfo.mainTypeCode)
+    },
+    // 设备大类联动设备小类
+    getMallEqu () {
+      this.detailInfo.iboxTypeId = ''
+      this.getIboxTypeList(this.detailInfo.iboxMainTypeCode)
+    },
+    // 上传图片
+    // 拿取文件
+    getFile (e) {
+      let file = e.target.files[0]
+      this.$store.dispatch('a:file/fileUploadToQiNiu', file).then(
+        res => {
+          this.detailInfo.imageUrl = res.downloadUrl
+        },
+        rej => {
+          this.alert(rej.errorInfo, 'error')
+        }
+      )
+    },
     // 使用权变更时间
     changeTime (event) {
       this.detailInfo.changeTime = event
@@ -267,6 +294,10 @@ export default {
     },
     // 改变使用权
     changeUserId () {
+      let arr = this.factory.filter(item => {
+        return item.facId === this.detailInfo.userId
+      })
+      this.detailInfo.userName = arr[0].facName
       if (this.detailInfo.userId !== this.userId) {
         this.showUserTime = true
       } else {
@@ -275,6 +306,10 @@ export default {
     },
     // 改变所有权
     changeProperty () {
+      let arr = this.factory.filter(item => {
+        return item.facId === this.detailInfo.propertyId
+      })
+      this.detailInfo.propertyName = arr[0].facName
       if (this.detailInfo.propertyId !== this.propertyId) {
         this.showPropertyTime = true
       } else {
@@ -282,8 +317,8 @@ export default {
       }
     },
     // 设备小类
-    getIboxTypeList () {
-      this.$store.dispatch('a:device/getIboxTypeList', {}).then(
+    getIboxTypeList (iboxMainTypeCode) {
+      this.$store.dispatch('a:device/getIboxTypeList', {iboxMainTypeCode: iboxMainTypeCode}).then(
         res => {
           this.iboxTypeList = res || []
         },
@@ -306,26 +341,127 @@ export default {
     searchTab () {
 
     },
-    // 编辑
-    edit () {
-      this.$store.dispatch('a:device/updateMachineById', this.detailInfo).then(
-        res => {
-          this.$router.push('/device/index')
-        },
-        rej => {
-          this.alert(rej.errorInfo, 'error')
-        }
-      )
+    // 校验是否为空
+    empyt () {
+      if (!this.detailInfo.equserialno) {
+        this.alert('序列号不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.mainTypeCode) {
+        this.alert('系统大类不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.typeId) {
+        this.alert('系统小类不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.machineName) {
+        this.alert('设备名称不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.iboxMainTypeCode) {
+        this.alert('设备大类不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.iboxTypeId) {
+        this.alert('设备小类不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.mac) {
+        this.alert('MAC不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.uKey) {
+        this.alert('UKEY不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.propertyId) {
+        this.alert('所有权不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.userId) {
+        this.alert('使用权不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.agentKey) {
+        this.alert('AGENT KEY不能为空！', 'error')
+        return false
+      } else if (!this.detailInfo.userType) {
+        this.alert('获取途径不能为空！', 'error')
+        return false
+      } else if (this.inTotype === 'edit' && this.detailInfo.userId !== this.userId && !this.detailInfo.changeTime) {
+        this.alert('使用权变更时间不能为空！', 'error')
+      } else if (this.inTotype === 'edit' && this.detailInfo.propertyId !== this.propertyId && !this.detailInfo.proChangeTime) {
+        this.alert('所有权变更时间不能为空！', 'error')
+      } else {
+        return true
+      }
     },
+    // 新增、编辑
     save () {
-      this.$store.dispatch('a:device/saveMachine', this.detailInfo).then(
-        res => {
-          this.$router.push('/device/index')
-        },
-        rej => {
-          this.alert(rej.errorInfo, 'error')
-        }
-      )
+      if (!this.empyt()) {
+        return
+      }
+      let _iboxTypeId = this.detailInfo.iboxTypeId
+      let _id = this.detailInfo.equId
+      let _serialNo = this.detailInfo.equserialno
+      let _mainTypeCode = this.detailInfo.mainTypeCode
+      let _equTypeId = this.detailInfo.typeId
+      let _machineName = this.detailInfo.machineName
+      let _mac = this.detailInfo.mac
+      let _ukey = this.detailInfo.uKey
+      let _agentKey = this.detailInfo.agentKey
+      let _propertyId = this.detailInfo.propertyId
+      let _propertyName = this.detailInfo.propertyName
+      let _userId = this.detailInfo.userId
+      let _userName = this.detailInfo.userName
+      let _userType = this.detailInfo.userType
+      let _imgUrl = this.detailInfo.imageUrl
+      let _specification = this.detailInfo.specification
+      let _iportType = this.detailInfo.iportType
+      let _vpnType = this.detailInfo.vpnType
+      let _isOnline = this.detailInfo.isOnline
+      let _changeTime = this.detailInfo.changeTime || ''
+      let _proChangeTime = this.detailInfo.proChangeTime || ''
+      let _madeFactoryId = this.detailInfo.madeFactoryId
+      let _madeFactoryName = this.detailInfo.madeFactoryName
+      let _iboxMainTypeCode = this.detailInfo.iboxMainTypeCode
+
+      this.editParams = {
+        iboxTypeId: _iboxTypeId,
+        _iboxMainTypeCode: _iboxMainTypeCode,
+        eduId: _id,
+        agentKey: _agentKey,
+        haveType: _userType,
+        mac: _mac,
+        mainTypeCode: _mainTypeCode,
+        orgName: _propertyName,
+        orgNameId: _propertyId,
+        path: _imgUrl,
+        symgMSerialName: _machineName,
+        symgMSerialNo: _serialNo,
+        symgMachineTypeId: _equTypeId,
+        uKey: _ukey,
+        userName: _userName,
+        userNameId: _userId,
+        specification: _specification,
+        iportType: _iportType,
+        vpnType: _vpnType,
+        isOnline: _isOnline,
+        changeTime: _changeTime,
+        proChangeTime: _proChangeTime,
+        madeFactoryId: _madeFactoryId,
+        madeFactoryName: _madeFactoryName
+      }
+      if (!this.detailInfo.equId) {
+        this.$store.dispatch('a:device/saveMachine', this.editParams).then(
+          res => {
+            this.$router.push('/device/index')
+          },
+          rej => {
+            this.alert(rej.errorInfo, 'error')
+          }
+        )
+      } else {
+        this.$store.dispatch('a:device/updateMachineById', this.editParams).then(
+          res => {
+            this.$router.push('/device/index')
+          },
+          rej => {
+            this.alert(rej.errorInfo, 'error')
+          }
+        )
+      }
     },
     detail () {
       this.$store.dispatch('a:device/getMachineById', this.params).then(
@@ -365,8 +501,8 @@ export default {
       )
     },
     // 获取设备类型
-    getMachineTypeByMainCode () {
-      this.$store.dispatch('a:device/getMachineTypeByMainCode', {}).then(
+    getMachineTypeByMainCode (mainTypeCode) {
+      this.$store.dispatch('a:device/getMachineTypeByMainCode', {mainTypeCode: mainTypeCode}).then(
         res => {
           this.machineTypeByMainCode = res || []
         },
@@ -408,5 +544,36 @@ export default {
   }
   .checkbox {
     width: 15px !important;
+  }
+  .uploadFile {
+    position: absolute;
+    right:-45px;
+    top: 0;
+    width: 40px;
+    border-radius: 5px;
+    height: 26px;
+    line-height: 26px;
+    background-color: #fabf40;
+    border: none;
+    color: #fff;
+    margin-left: 30px;
+  }
+  .fileUp {
+    position: absolute;
+    right:-45px;
+    top: 0;
+    opacity: 0;
+    width: 60px !important;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .fileBox {
+    position: relative;
+    .fileUrl {
+      border: 1px solid #C9C9C9;
+      border-radius: 3px;
+      box-sizing: border-box;
+      padding: 0 10px;
+    }
   }
 </style>

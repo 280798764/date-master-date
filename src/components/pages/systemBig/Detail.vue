@@ -38,7 +38,7 @@
         <input type="text" v-model.trim="picList.picPath">
         <div class="fileBox">
           <button class="uploadFile">上传</button>
-          <input type="file" class="fileUp" @change="getFile">
+          <input type="file" class="fileUp" title="点击上传" @change="getFile">
         </div>
       </div>
       <div class="filter-line reset-height">

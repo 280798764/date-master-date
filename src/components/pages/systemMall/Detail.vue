@@ -64,9 +64,8 @@
         <input type="text" v-model.trim="picPath">
         <div class="fileBox">
           <button class="uploadFile">上传</button>
-          <input type="file" class="fileUp" @change="getFile">
+          <input type="file" class="fileUp" title="点击上传" @change="getFile">
         </div>
-        <!--<button class="uploadFile">上传</button>-->
       </div>
       <div class="filter-line reset-height">
         <label>图片预览</label>
@@ -177,6 +176,7 @@ export default {
           this.picList = res.picList[0] || []
           this.picTitle1 = res.picList[0] && res.picList[0].picTitle
           this.picPath = res.picList[0] && res.picList[0].picPath
+          console.log(this.picPath, 'this.picPath')
         },
         rej => {
           this.alert(rej.errorInfo, 'error')

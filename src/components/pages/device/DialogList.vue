@@ -9,7 +9,12 @@
       <div class="dialog-body">
         <div>
           <h5>已注册设备，请检查是否继续导入更新？</h5>
-          <p v-for="(list, index) in diffList" :key="index" :class="{red: list.isChangeTime}" >设备序列号：{{list.mtNo}}  <span v-if="list.isChangeTime" style="margin-left: 10px" >使用权变更，需输入变更时间</span></p>
+          <p v-for="(list, index) in diffList" :key="index" :class="{red: list.isChangeTime || list.proChangeTime}" >
+            设备序列号：{{list.mtNo}}
+            <span v-if="list.isChangeTime & !list.proChangeTime" style="margin-left: 10px" >使用权变更，需输入变更时间</span>
+            <span v-if="list.proChangeTime & !list.isChangeTime" style="margin-left: 10px" >所有权变更，需输入变更时间</span>
+            <span v-if="list.proChangeTime & list.isChangeTime" style="margin-left: 10px" >使用权、所有权变更，需输入变更时间</span>
+          </p>
         </div>
       </div>
       <div class="dialog-footer">
