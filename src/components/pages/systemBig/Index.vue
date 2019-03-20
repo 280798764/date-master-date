@@ -28,7 +28,7 @@
       <span>系统大类列表</span>
     </div>
     <section class="func-btns-wrapper">
-      <div class="func-btn btn-create" @click="edit('create')">新建</div>
+      <div class="func-btn btn-create iconfont icon-icon-btn-create" @click="edit('create')">新建</div>
     </section >
     <section class="table-wrapper">
       <section class="list-wrapper custom-scroll scroll">

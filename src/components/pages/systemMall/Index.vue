@@ -50,7 +50,7 @@
       <span>系统小类列表</span>
     </div>
     <section class="func-btns-wrapper">
-      <div class="func-btn btn-create" @click="edit('create')">新建</div>
+      <div class="func-btn btn-create iconfont icon-icon-btn-create" @click="edit('create')">新建</div>
     </section >
     <section class="table-wrapper">
       <section class="list-wrapper custom-scroll scroll">
@@ -59,7 +59,7 @@
             <td><div>{{props.item.typeCode}}</div></td>
             <td><div>{{props.item.typeName}}</div></td>
             <td><div>{{props.item.mainTypeName}}</div></td>
-            <td><div>后端需添加品牌字段</div></td>
+            <td><div>{{props.item.brandName}}</div></td>
             <td><div>{{props.item.mapTypeName}}</div></td>
             <td><div>{{props.item.vdpParams}}</div></td>
             <td><div>{{props.item.vdpService}}</div></td>

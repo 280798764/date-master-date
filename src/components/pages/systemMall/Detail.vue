@@ -63,7 +63,7 @@
         <label>图片URL</label>
         <input type="text" v-model.trim="picPath">
         <div class="fileBox">
-          <button class="uploadFile">上传</button>
+          <button class="uploadFile iconfont icon-shangchuan1">上传</button>
           <input type="file" class="fileUp" title="点击上传" @change="getFile">
         </div>
       </div>

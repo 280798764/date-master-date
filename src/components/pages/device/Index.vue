@@ -115,10 +115,10 @@
         </div>
       </section>
       <section class="func-btns-wrapper">
-        <div class="func-btn btn-create" @click="beforeUploadFile">批量导入</div>
+        <div class="func-btn btn-create iconfont icon-daoru" @click="beforeUploadFile">批量导入</div>
         <input class="hidden" type="file" id="uploadFileList" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
-        <div class="func-btn btn-create" @click="initParamsConfig">初始化</div>
-        <div class="func-btn btn-create" @click="edit('create')">新建</div>
+        <div class="func-btn btn-create iconfont icon-chushihualiuchengshitu" @click="initParamsConfig">初始化</div>
+        <div class="func-btn btn-create iconfont icon-icon-btn-create" @click="edit('create')">新建</div>
       </section >
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
@@ -135,7 +135,7 @@
               <td><div>{{props.item.iboxTypeName}}</div></td>
               <td><div>{{props.item.equserialno}}</div></td>
               <td><div>{{props.item.madeFactoryName}}</div></td>
-              <td><div>{{props.item.brand}}品牌</div></td>
+              <td><div>{{props.item.brandName}}</div></td>
               <td><div>{{props.item.propertyName}}</div></td>
               <td><div>{{props.item.userName}}</div></td>
               <td><div>{{props.item.mac}}</div></td>
@@ -299,7 +299,7 @@ export default {
           }
         )
       } else {
-        this.alert('请选择要初始化的数据！', 'info')
+        this.alert('请选择需要初始化的数据！', 'info')
       }
       this.selectAllFlag = false
     },

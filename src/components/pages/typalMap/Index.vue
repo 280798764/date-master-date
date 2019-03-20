@@ -17,7 +17,7 @@
         </div>
       </section>
       <section class="func-btns-wrapper">
-        <div class="func-btn btn-create" @click="edit('create')">新建</div>
+        <div class="func-btn btn-create iconfont icon-icon-btn-create" @click="edit('create')">新建</div>
       </section >
       <div class="page-title-wrapper" >
         <span class="icon-title"></span>
