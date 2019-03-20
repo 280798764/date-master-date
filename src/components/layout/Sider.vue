@@ -7,7 +7,7 @@
   <section class="nav-wrapper">
     <div>
       <ul v-for="(nav, i) in navList" :key="i" @click="firstIndex">
-        <router-link tag="div" :to="idToPath[nav.url]" class="parent"><span class="iconfont icon-shebeipeizhi"></span>{{nav.moduleName}}</router-link>
+        <router-link tag="div" :to="idToPath[nav.url]" class="parent"><span class="icon-reset iconfont"  :class="nav.icon"></span>{{nav.moduleName}}</router-link>
       </ul>
     </div>
   </section>
@@ -164,7 +164,10 @@ export default {
   ui:hover {
     background: #e5e8ee;
   }
-  .iconfont {
+  .icon-reset {
+    width: 16px;
+    height: 16px;
     margin-right: 5px;
+    vertical-align: middle;
   }
 </style>
